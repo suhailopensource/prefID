@@ -1,0 +1,40 @@
+name: Publish
+
+# Publishes to npm automatically when you push a version tag, e.g. `v0.1.3`.
+# Create the tag with `npm version patch` (or minor/major), then
+# `git push --follow-tags`.
+#
+# Authentication uses npm Trusted Publishing (OIDC) — no token required.
+# Configure the trusted publisher for this package at:
+#   https://www.npmjs.com/package/prefid/access
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # required for OIDC trusted publishing + provenance
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: "https://registry.npmjs.org"
+
+      # Trusted publishing (OIDC) requires npm 11.5.1 or newer.
+      - run: npm install -g npm@latest
+
+      - run: npm ci
+
+      - run: npm run typecheck
+
+      - run: npm test
+
+      # `prepublishOnly` builds dist/ first. Provenance is generated
+      # automatically when publishing via a trusted publisher.
+      - run: npm publish
