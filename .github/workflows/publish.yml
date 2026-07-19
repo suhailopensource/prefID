@@ -26,8 +26,9 @@ jobs:
           node-version: 20
           registry-url: "https://registry.npmjs.org"
 
-      # Trusted publishing (OIDC) requires npm 11.5.1 or newer.
-      - run: npm install -g npm@latest
+      # Trusted publishing (OIDC) requires npm 11.5.1+. npm 12 needs Node 22+,
+      # so pin to npm 11, which supports both Node 20 and OIDC publishing.
+      - run: npm install -g npm@11
 
       - run: npm ci
 
