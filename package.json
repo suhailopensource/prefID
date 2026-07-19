@@ -47,7 +47,7 @@
   "bugs": {
     "url": "https://github.com/suhailopensource/prefID/issues"
   },
-  "homepage": "https://github.com/suhailopensource/prefID#readme",
+  "homepage": "https://prefid.vercel.app",
   "engines": {
     "node": ">=18"
   },
