@@ -1,0 +1,62 @@
+{
+  "name": "prefid",
+  "version": "0.1.0",
+  "description": "Type-safe, Stripe-style prefixed IDs (user_a1b2c3) with zero dependencies.",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "id",
+    "uuid",
+    "nanoid",
+    "prefix",
+    "prefixed-id",
+    "typeid",
+    "stripe",
+    "typescript",
+    "type-safe",
+    "crypto"
+  ],
+  "author": "Syed Suhail Ahmed",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/your-username/prefid.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/prefid/issues"
+  },
+  "homepage": "https://github.com/your-username/prefid#readme",
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "^2.0.0",
+    "prettier": "^3.3.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.4.0",
+    "vitest": "^2.0.0"
+  }
+}
