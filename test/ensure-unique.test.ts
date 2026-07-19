@@ -56,7 +56,6 @@ describe("ensureUnique()", () => {
       () => id("user"),
       () => false,
     );
-    // Compile-time assertion: the result keeps its `user_${string}` type.
     const typed: `user_${string}` = result;
     expect(typed.startsWith("user_")).toBe(true);
   });
