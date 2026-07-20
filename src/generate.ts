@@ -3,10 +3,9 @@ import {
   DEFAULT_SEPARATOR,
   DEFAULT_SIZE,
 } from "./constants.js";
-import { randomString } from "./random.js";
+import { randomString } from "./internal/random.js";
 import type { IdGenerator, IdOptions, PrefixedId } from "./types.js";
 
-/** Validates a prefix at call time and throws a helpful error if it is invalid. */
 function assertValidPrefix(prefix: string, separator: string): void {
   if (typeof prefix !== "string" || prefix.length === 0) {
     throw new TypeError("prefid: prefix must be a non-empty string.");
@@ -18,14 +17,6 @@ function assertValidPrefix(prefix: string, separator: string): void {
   }
 }
 
-/**
- * Creates an id generator with fixed options. Use this to configure the size,
- * separator, or alphabet once and reuse everywhere.
- *
- * @example
- * const id = createId({ size: 16 });
- * id("user"); // => "user_a1b2c3d4e5f6g7h8"
- */
 export function createId(defaults: IdOptions = {}): IdGenerator {
   const size = defaults.size ?? DEFAULT_SIZE;
   const separator = defaults.separator ?? DEFAULT_SEPARATOR;
@@ -49,11 +40,4 @@ export function createId(defaults: IdOptions = {}): IdGenerator {
   };
 }
 
-/**
- * Generates a prefixed id using the default options
- * (24 random base62 characters, `_` separator).
- *
- * @example
- * id("user"); // => "user_a8Kd0f2bQ1..."
- */
 export const id: IdGenerator = createId();

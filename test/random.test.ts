@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { randomString, secureRandomBytes } from "../src/random.js";
+import { randomString, secureRandomBytes } from "../src/internal/random.js";
 
 const toHex = (bytes: Uint8Array): string =>
   Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
@@ -29,7 +29,6 @@ describe("randomString()", () => {
     for (let i = 0; i < runs; i++) {
       counts[Number(randomString("0123456789", 1))]++;
     }
-    // Each digit should appear ~10% of the time; allow a generous margin.
     const expected = runs / 10;
     for (const count of counts) {
       expect(Math.abs(count - expected)).toBeLessThan(expected * 0.15);

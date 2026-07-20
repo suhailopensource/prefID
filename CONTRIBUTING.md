@@ -33,18 +33,19 @@ npm install
 
 ```
 src/
-  index.ts         Public entry point (barrel of exports)
-  generate.ts      createId + the default `id` generator
-  ensure-unique.ts ensureUnique helper
-  validate.ts      isId + getPrefix
-  random.ts        Internal CSPRNG helpers (not exported publicly)
-  constants.ts     Default alphabet / size / separator
-  types.ts         Public types
-test/              One test file per source module
+  index.ts           Public entry point (barrel of exports)
+  generate.ts        createId + the default `id` generator
+  ensure-unique.ts   ensureUnique helper
+  validate.ts        isId + getPrefix
+  constants.ts       Default alphabet / size / separator
+  types.ts           Public types
+  internal/
+    random.ts        Internal CSPRNG helpers (not exported publicly)
+test/                One test file per source module
 ```
 
 ## Code style
 
 - TypeScript, strict mode, no runtime dependencies.
-- Prefer small, focused, well-documented functions.
-- Public functions get a JSDoc block with an `@example`.
+- Prefer small, focused functions with clear, self-explanatory names.
+- Keep the code comment-free; document behavior in the README and tests.
