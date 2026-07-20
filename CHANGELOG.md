@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-07-20
+
+### Added
+
+- `template(pattern, options)` — generate IDs from a custom pattern where each
+  `#` becomes a secure random character (e.g. `INV-####-####`), with
+  configurable `placeholder` and `alphabet`.
+
+### Changed
+
+- Moved the internal CSPRNG helpers to `src/internal/random.ts`.
+- Documentation moved to the dedicated site at https://prefid.vercel.app; the
+  README now links there instead of duplicating the full API.
+
 ## [0.1.0] - 2026-07-19
 
 ### Added
@@ -20,5 +34,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Cryptographically secure random source with unbiased sampling and a Node
   `crypto` fallback for runtimes without the Web Crypto global.
 
-[Unreleased]: https://github.com/suhailopensource/prefID/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/suhailopensource/prefID/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/suhailopensource/prefID/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/suhailopensource/prefID/releases/tag/v0.1.0
