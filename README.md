@@ -1,13 +1,20 @@
+<div align="center">
+
 # prefID
 
-> Type-safe, prefixed IDs like `user_a1b2c3` — always know what an ID belongs to.
+**Type-safe, prefixed IDs like `user_a1b2c3` — always know what an ID belongs to.**
 
-[![npm version](https://img.shields.io/npm/v/prefid.svg)](https://www.npmjs.com/package/prefid)
-[![CI](https://github.com/suhailopensource/prefID/actions/workflows/ci.yml/badge.svg)](https://github.com/suhailopensource/prefID/actions/workflows/ci.yml)
-[![minzipped size](https://img.shields.io/bundlephobia/minzip/prefid.svg)](https://bundlephobia.com/package/prefid)
-[![license](https://img.shields.io/npm/l/prefid.svg)](./LICENSE)
+[![npm version](https://img.shields.io/npm/v/prefid?style=flat-square&color=cb3837&logo=npm)](https://www.npmjs.com/package/prefid)
+[![downloads](https://img.shields.io/npm/dm/prefid?style=flat-square&color=cb3837)](https://www.npmjs.com/package/prefid)
+[![CI](https://img.shields.io/github/actions/workflow/status/suhailopensource/prefID/ci.yml?style=flat-square&logo=github&label=CI)](https://github.com/suhailopensource/prefID/actions/workflows/ci.yml)
+[![minzipped size](https://img.shields.io/bundlejs/size/prefid?style=flat-square&label=minzipped)](https://bundlejs.com/?q=prefid)
+[![types](https://img.shields.io/npm/types/prefid?style=flat-square&logo=typescript&label=types)](https://www.npmjs.com/package/prefid)
+[![dependencies](https://img.shields.io/badge/dependencies-0-brightgreen?style=flat-square)](https://www.npmjs.com/package/prefid?activeTab=dependencies)
+[![license](https://img.shields.io/npm/l/prefid?style=flat-square&color=blue)](./LICENSE)
 
 📖 **[Read the full documentation → prefid.vercel.app](https://prefid.vercel.app)**
+
+</div>
 
 **prefID** generates short, unique IDs that carry a prefix telling you what they belong to — `user_a1b2c3`, `order_9f8e7d`. The prefix makes IDs readable in logs, URLs, and your database, and TypeScript understands it, so you can never mix a user ID up with an order ID.
 
