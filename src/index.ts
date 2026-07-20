@@ -1,5 +1,5 @@
 /**
- * prefid — type-safe, Stripe-style prefixed IDs with zero dependencies.
+ * prefid — type-safe, prefixed IDs with zero dependencies.
  *
  * @example
  * import { id, createId, isId, getPrefix, ensureUnique } from "prefid";

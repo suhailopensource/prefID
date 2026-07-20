@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- `id(prefix)` — generate a type-safe, Stripe-style prefixed id.
+- `id(prefix)` — generate a type-safe, prefixed id.
 - `createId(options)` — configure `size`, `separator`, and `alphabet`.
 - `ensureUnique(generate, exists, options)` — retry generation against your own
   store until a free id is found, with a `maxAttempts` guard.
@@ -20,5 +20,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Cryptographically secure random source with unbiased sampling and a Node
   `crypto` fallback for runtimes without the Web Crypto global.
 
-[Unreleased]: https://github.com/your-username/prefid/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/your-username/prefid/releases/tag/v0.1.0
+[Unreleased]: https://github.com/suhailopensource/prefID/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/suhailopensource/prefID/releases/tag/v0.1.0

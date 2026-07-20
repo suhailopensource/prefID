@@ -5,7 +5,7 @@ Thanks for your interest in improving `prefid`! 🎉
 ## Development setup
 
 ```bash
-git clone https://github.com/your-username/prefid.git
+git clone https://github.com/suhailopensource/prefID.git
 cd prefid
 npm install
 ```

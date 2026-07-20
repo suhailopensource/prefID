@@ -1,7 +1,7 @@
 {
   "name": "prefid",
   "version": "0.1.0",
-  "description": "Type-safe, Stripe-style prefixed IDs (user_a1b2c3) with zero dependencies.",
+  "description": "Type-safe, prefixed IDs (user_a1b2c3) with zero dependencies.",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -34,7 +34,6 @@
     "prefix",
     "prefixed-id",
     "typeid",
-    "stripe",
     "typescript",
     "type-safe",
     "crypto"
@@ -43,12 +42,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/your-username/prefid.git"
+    "url": "git+https://github.com/suhailopensource/prefID.git"
   },
   "bugs": {
-    "url": "https://github.com/your-username/prefid/issues"
+    "url": "https://github.com/suhailopensource/prefID/issues"
   },
-  "homepage": "https://github.com/your-username/prefid#readme",
+  "homepage": "https://github.com/suhailopensource/prefID#readme",
   "engines": {
     "node": ">=18"
   },
