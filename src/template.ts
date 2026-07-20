@@ -1,4 +1,4 @@
-import { DEFAULT_ALPHABET } from "./constants.js";
+import { DEFAULT_ALPHABET, MAX_SIZE } from "./constants.js";
 import { randomString } from "./internal/random.js";
 
 export interface TemplateOptions {
@@ -41,6 +41,11 @@ export function template(
   if (slots === 0) {
     throw new RangeError(
       `prefid: template pattern must contain at least one "${placeholder}" placeholder.`,
+    );
+  }
+  if (slots > MAX_SIZE) {
+    throw new RangeError(
+      `prefid: template pattern must not contain more than ${MAX_SIZE} "${placeholder}" placeholders.`,
     );
   }
 

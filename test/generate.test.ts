@@ -52,6 +52,17 @@ describe("createId()", () => {
     expect(() => createId({ size: 1.5 })).toThrow(RangeError);
   });
 
+  it("rejects a size above the maximum (DoS guard)", () => {
+    expect(() => createId({ size: 4097 })).toThrow(RangeError);
+    expect(() => createId({ size: 5_000_000 })).toThrow(RangeError);
+    expect(() => createId({ size: 2 ** 53 })).toThrow(RangeError);
+  });
+
+  it("accepts the maximum size boundary", () => {
+    const gen = createId({ size: 4096 });
+    expect(gen("x").length).toBe("x_".length + 4096);
+  });
+
   it("rejects an alphabet shorter than 2 characters", () => {
     expect(() => createId({ alphabet: "x" })).toThrow(RangeError);
   });

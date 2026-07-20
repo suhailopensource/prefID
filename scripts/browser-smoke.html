@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>prefid — browser smoke test</title>
+    <style>
+      body {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        background: #0f172a;
+        color: #e2e8f0;
+        padding: 2rem;
+        line-height: 1.6;
+      }
+      #status {
+        font-size: 1.25rem;
+        font-weight: bold;
+      }
+      pre {
+        background: #1e293b;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        overflow-x: auto;
+      }
+      .ok {
+        color: #4ade80;
+      }
+      .fail {
+        color: #f87171;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="status">Running…</div>
+    <pre id="output"></pre>
+
+    <script type="module">
+      import {
+        createId,
+        ensureUnique,
+        getPrefix,
+        id,
+        isId,
+        template,
+      } from "../dist/index.js";
+
+      const status = document.getElementById("status");
+      const output = document.getElementById("output");
+
+      try {
+        const lines = [];
+
+        const uid = id("user");
+        if (!isId(uid, "user")) throw new Error("id() failed");
+        lines.push(`id("user")            -> ${uid}`);
+        lines.push(`getPrefix(...)        -> ${getPrefix(uid)}`);
+        lines.push(
+          `createId({ size: 8 }) -> ${createId({ size: 8 })("order")}`,
+        );
+        lines.push(`template("t-####")    -> ${template("t-####")()}`);
+
+        const unique = await ensureUnique(
+          () => id("u"),
+          (c) => !isId(c, "u"),
+        );
+        lines.push(`ensureUnique(...)     -> ${unique}`);
+
+        const seen = new Set(Array.from({ length: 1000 }, () => id("x")));
+        if (seen.size !== 1000) throw new Error("collision detected");
+        lines.push(`1000 ids generated    -> all unique`);
+
+        status.textContent = "✅ prefid works in the browser";
+        status.className = "ok";
+        output.textContent = lines.join("\n");
+      } catch (error) {
+        status.textContent = "❌ " + error.message;
+        status.className = "fail";
+      }
+    </script>
+  </body>
+</html>

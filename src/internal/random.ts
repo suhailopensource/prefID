@@ -1,3 +1,5 @@
+type BytesProvider = (length: number) => Uint8Array;
+
 interface NodeCryptoLike {
   randomFillSync(buffer: Uint8Array): Uint8Array;
 }
@@ -14,7 +16,7 @@ function loadNodeCrypto(): NodeCryptoLike | undefined {
   }
 }
 
-export function secureRandomBytes(length: number): Uint8Array {
+export function universalProvider(length: number): Uint8Array {
   const bytes = new Uint8Array(length);
 
   const webCrypto = globalThis.crypto;
@@ -29,8 +31,20 @@ export function secureRandomBytes(length: number): Uint8Array {
 
   throw new Error(
     "prefid: no secure random source found. This environment exposes " +
-      "neither `globalThis.crypto.getRandomValues` nor Node's `crypto` module.",
+      "neither `globalThis.crypto.getRandomValues` nor Node's `crypto` module. " +
+      "If you are on Node 18 ESM, import from the package's default entry so the " +
+      "Node-specific build is selected.",
   );
+}
+
+let bytesProvider: BytesProvider = universalProvider;
+
+export function setBytesProvider(provider: BytesProvider): void {
+  bytesProvider = provider;
+}
+
+export function secureRandomBytes(length: number): Uint8Array {
+  return bytesProvider(length);
 }
 
 export function randomString(alphabet: string, size: number): string {

@@ -9,6 +9,11 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
+      "node": {
+        "import": "./dist/index.node.js",
+        "require": "./dist/index.cjs"
+      },
+      "browser": "./dist/index.js",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     }
@@ -22,6 +27,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
+    "smoke": "node scripts/smoke.mjs && node scripts/smoke.cjs",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -49,9 +55,10 @@
   },
   "homepage": "https://prefid.vercel.app",
   "engines": {
-    "node": ">=18"
+    "node": ">=14.18"
   },
   "devDependencies": {
+    "@types/node": "^20.19.43",
     "@vitest/coverage-v8": "^2.0.0",
     "prettier": "^3.3.0",
     "tsup": "^8.0.0",

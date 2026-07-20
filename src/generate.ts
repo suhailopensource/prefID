@@ -2,6 +2,7 @@ import {
   DEFAULT_ALPHABET,
   DEFAULT_SEPARATOR,
   DEFAULT_SIZE,
+  MAX_SIZE,
 } from "./constants.js";
 import { randomString } from "./internal/random.js";
 import type { IdGenerator, IdOptions, PrefixedId } from "./types.js";
@@ -22,8 +23,10 @@ export function createId(defaults: IdOptions = {}): IdGenerator {
   const separator = defaults.separator ?? DEFAULT_SEPARATOR;
   const alphabet = defaults.alphabet ?? DEFAULT_ALPHABET;
 
-  if (!Number.isInteger(size) || size < 1) {
-    throw new RangeError("prefid: `size` must be a positive integer.");
+  if (!Number.isInteger(size) || size < 1 || size > MAX_SIZE) {
+    throw new RangeError(
+      `prefid: \`size\` must be an integer between 1 and ${MAX_SIZE}.`,
+    );
   }
   if (typeof alphabet !== "string" || alphabet.length < 2) {
     throw new RangeError(

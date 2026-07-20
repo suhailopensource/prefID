@@ -30,7 +30,18 @@ npm install prefid
 - 🧠 **Type-safe** — `id("user")` has the type `` `user_${string}` ``, so passing the wrong ID type is a compile error.
 - 🔒 **Secure** — the random part uses the platform's cryptographic RNG, never `Math.random()`.
 - 🪶 **Zero dependencies** — tiny and focused on one job.
-- 🌍 **Universal** — works in Node, browsers, Deno, Bun, and edge runtimes. Ships ESM + CommonJS.
+- 🌍 **Universal** — works in Node 14.18+, browsers, Deno, Bun, and edge runtimes. Ships ESM + CommonJS.
+
+## Compatibility
+
+prefid runs anywhere with a cryptographic RNG, and picks the right source automatically:
+
+| Runtime | Random source |
+| --- | --- |
+| Node.js **14.18+** (ESM + CommonJS) | `node:crypto` |
+| Browsers, Deno, Bun, edge runtimes | `globalThis.crypto` |
+
+Node 14.18 is the minimum because it's the first release with `require("node:crypto")`. On Node ESM versions that don't expose a global `crypto` (14–19), a Node-specific entry point (selected automatically via the package's `exports` conditions) sources randomness from `node:crypto` — so ESM works there too.
 
 ## Documentation
 

@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18, 20, 22]
+        node-version: [18, 20, 22, 24]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -23,3 +23,52 @@ jobs:
       - run: npm run typecheck
       - run: npm test
       - run: npm run build
+
+      # Smoke-test the built package on every modern Node version, ESM + CJS.
+      - run: npm run smoke
+
+  # Node 14.18 and 16 are past EOL, and the build/test toolchain (vitest, tsup)
+  # requires Node 18+, so they can't run the full job. Instead we build on a
+  # modern Node, then switch to the legacy runtime and run the smoke against the
+  # already-built dist. This proves the published package works there — 14.18 is
+  # the floor because that's the first Node with `require("node:crypto")`.
+  legacy-node:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ["14.18", "16"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Smoke (ESM + CJS)
+        run: node scripts/smoke.mjs && node scripts/smoke.cjs
+
+  runtimes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+
+      - uses: oven-sh/setup-bun@v2
+      - name: Bun
+        run: bun scripts/smoke.mjs
+
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Deno
+        run: deno run --allow-read scripts/smoke.mjs

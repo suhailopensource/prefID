@@ -4,3 +4,5 @@ export const DEFAULT_ALPHABET =
 export const DEFAULT_SIZE = 24;
 
 export const DEFAULT_SEPARATOR = "_";
+
+export const MAX_SIZE = 4096;

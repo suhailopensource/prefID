@@ -53,6 +53,16 @@ describe("template()", () => {
     expect(() => template("noplaceholder")).toThrow(RangeError);
   });
 
+  it("throws when the pattern exceeds the placeholder maximum (DoS guard)", () => {
+    expect(() => template("#".repeat(4097))).toThrow(RangeError);
+    expect(() => template("#".repeat(2_000_000))).toThrow(RangeError);
+  });
+
+  it("accepts the maximum placeholder count boundary", () => {
+    const gen = template("#".repeat(4096));
+    expect(gen().length).toBe(4096);
+  });
+
   it("throws on a multi-character placeholder", () => {
     expect(() => template("a##", { placeholder: "##" })).toThrow(RangeError);
   });

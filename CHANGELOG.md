@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Cross-runtime smoke tests (Node ESM + CJS, Bun, Deno) run in CI on every push,
+  across Node 14.18, 16, 18, 20, 22, and 24.
+- Node-specific entry point (selected via the `node` export condition) that sources
+  secure random bytes from `node:crypto`. This fixes ID generation on **Node ESM
+  versions without a global `crypto`** (Node 14–19 in ES modules), where
+  `globalThis.crypto` is not a global and there is no `require`. Browsers, Deno,
+  Bun, and edge runtimes continue to use `globalThis.crypto`.
+- Unit tests for the random-bytes provider indirection, including the
+  `node:crypto`-backed path that older Node ESM relies on.
+
+### Changed
+
+- **Minimum supported Node.js is now 14.18** (down from an interim 20). 14.18 is
+  the first release with `require("node:crypto")`, which the CommonJS build needs.
+  The build target was lowered to `es2020` to guarantee Node 14-parseable output.
+
+### Security
+
+- Cap the number of random characters generated per call at **4096**
+  (`createId`'s `size` and `template`'s placeholder count). Prevents a huge value
+  from exhausting CPU/memory when it originates from untrusted input; both now
+  throw a `RangeError` above the limit. Default behaviour is unchanged.
+
 ## [0.2.0] - 2026-07-20
 
 ### Added
