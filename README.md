@@ -7,6 +7,8 @@
 [![minzipped size](https://img.shields.io/bundlephobia/minzip/prefid.svg)](https://bundlephobia.com/package/prefid)
 [![license](https://img.shields.io/npm/l/prefid.svg)](./LICENSE)
 
+📖 **[Read the documentation →](https://prefid.vercel.app)**
+
 **prefID** generates short, unique IDs that carry a prefix telling you what they belong to — `user_a1b2c3`, `order_9f8e7d`. The prefix makes IDs readable in logs, URLs, and your database, and TypeScript understands it, so you can never mix a user ID up with an order ID.
 
 ```ts
