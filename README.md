@@ -2,7 +2,7 @@
 
 # prefID
 
-**Type-safe, prefixed IDs like `user_a1b2c3` — always know what an ID belongs to.**
+**Type-safe, prefixed IDs like `user_a1b2c3` for TypeScript & JavaScript — always know what an ID belongs to.**
 
 [![npm version](https://img.shields.io/npm/v/prefid?style=flat-square&color=cb3837&logo=npm)](https://www.npmjs.com/package/prefid)
 [![downloads](https://img.shields.io/npm/dm/prefid?style=flat-square&color=cb3837)](https://www.npmjs.com/package/prefid)
@@ -35,9 +35,24 @@ npm install prefid
 
 - 🏷️ **Self-describing** — the prefix tells you what an ID is at a glance.
 - 🧠 **Type-safe** — `id("user")` has the type `` `user_${string}` ``, so passing the wrong ID type is a compile error.
+- 🟨 **JavaScript too** — TypeScript is optional. Works the same in plain JS; types are a bonus, not a requirement.
 - 🔒 **Secure** — the random part uses the platform's cryptographic RNG, never `Math.random()`.
 - 🪶 **Zero dependencies** — tiny and focused on one job.
 - 🌍 **Universal** — works in Node 14.18+, browsers, Deno, Bun, and edge runtimes. Ships ESM + CommonJS.
+
+## JavaScript or TypeScript
+
+prefID works in **plain JavaScript** just as well as in TypeScript — the published package is already compiled JavaScript, so there's nothing to compile on your end:
+
+```js
+// CommonJS
+const { id } = require("prefid");
+// or ESM: import { id } from "prefid";
+
+id("user"); // "user_a8Kd0f2bQ1nR7pZ3xW4mT6y"
+```
+
+Everything (`id`, `createId`, `template`, `ensureUnique`, `isId`, `getPrefix`) runs identically in JS. TypeScript users get one extra thing on top — the typed prefix (`` `user_${string}` ``) that catches wrong-ID mistakes at compile time. JS users still get editor autocomplete from the bundled type definitions.
 
 ## Compatibility
 
