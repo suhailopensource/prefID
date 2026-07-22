@@ -25,6 +25,35 @@ id("user"); // => "user_a8Kd0f2bQ1nR7pZ3xW4mT6y"
 id("order"); // => "order_9f8e7d6c5b4a3F2e1D0cB9aX"
 ```
 
+## Sortable IDs
+
+Need IDs that sort by creation time? `sortableId` puts a time component up front,
+so a plain string sort is also a chronological sort — the idea behind ULID and
+UUIDv7, but keeping prefID's prefix and type. Great for database keys, cursors,
+and correlating logs, without a central sequence:
+
+```ts
+import { sortableId, getTimestamp } from "prefid";
+
+sortableId("evt"); // => "evt_00VQ5a1k0lBjgjfx6pwYy6WkY"
+sortableId("evt"); // => "evt_00VQ5a1mgkWGzAvv93g1bC3yR"  ← later, and sorts after
+
+// IDs created in the same millisecond (or if the clock steps backwards) are
+// still strictly increasing — monotonic by default.
+
+getTimestamp("evt_00VQ5a1k0lBjgjfx6pwYy6WkY"); // => 1721600000000 (ms)
+```
+
+Prefer a case-insensitive, unambiguous alphabet (like ULID)? Use the exported
+`BASE32_CROCKFORD` preset — it drops the look-alike letters `I`, `L`, `O`, `U`:
+
+```ts
+import { createSortableId, BASE32_CROCKFORD } from "prefid";
+
+const eventId = createSortableId({ alphabet: BASE32_CROCKFORD });
+eventId("evt"); // => "evt_00VQ5A1K0MBJGJFX6PWYY6WKY" — no 0/O or 1/l confusion
+```
+
 ## Install
 
 ```bash
@@ -35,6 +64,7 @@ npm install prefid
 
 - 🏷️ **Self-describing** — the prefix tells you what an ID is at a glance.
 - 🧠 **Type-safe** — `id("user")` has the type `` `user_${string}` ``, so passing the wrong ID type is a compile error.
+- 🔀 **Sortable option** — `sortableId("evt")` embeds a time component so IDs sort chronologically as plain strings (ULID / UUIDv7-style), with no central coordinator.
 - 🟨 **JavaScript too** — TypeScript is optional. Works the same in plain JS; types are a bonus, not a requirement.
 - 🔒 **Secure** — the random part uses the platform's cryptographic RNG, never `Math.random()`.
 - 🪶 **Zero dependencies** — tiny and focused on one job.
@@ -74,6 +104,7 @@ Full guides, examples, and the complete API live on the **[documentation site](h
 | [Quick Start](https://prefid.vercel.app/docs/quick-start) | Generate your first ID |
 | [`id()`](https://prefid.vercel.app/docs/api/id) | The default generator |
 | [`createId()`](https://prefid.vercel.app/docs/api/create-id) | Configure size, separator, alphabet |
+| [`sortableId()`](https://prefid.vercel.app/docs/api/sortable-id) | Time-ordered IDs (ULID / UUIDv7-style) |
 | [`template()`](https://prefid.vercel.app/docs/api/template) | Custom ID layouts (`INV-####-####`) |
 | [`ensureUnique()`](https://prefid.vercel.app/docs/api/ensure-unique) | Guarantee an ID is free in your store |
 | [`isId()` & `getPrefix()`](https://prefid.vercel.app/docs/api/validation) | Validate and read IDs |

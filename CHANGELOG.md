@@ -7,6 +7,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-07-22
+
+### Added
+
+- **Sortable IDs** — `createSortableId(options)` and the ready-to-use
+  `sortableId` generator produce time-ordered, prefixed IDs (`evt_00VQ5a1k…`)
+  in the spirit of ULID and UUIDv7. The body is a fixed-width, lexicographically
+  sortable timestamp followed by a cryptographically random tail, so IDs sort
+  chronologically as plain strings — useful for database primary keys, cursors,
+  and log correlation, with no central coordinator.
+  - **Monotonic by default** — IDs created within the same millisecond, or when
+    the system clock moves backwards, are still strictly increasing (the random
+    tail is incremented rather than redrawn; on exhaustion it spills into the
+    next millisecond). Pass `monotonic: false` for a stateless generator ordered
+    at millisecond granularity.
+  - Configurable `separator`, `alphabet`, `randomSize`, `timestampSize`, and an
+    injectable `now` clock. A sortable `alphabet` must be in strictly ascending
+    code-point order (the default base62 already is), otherwise a lexicographic
+    sort would not match chronological order — this is validated.
+- `getTimestamp(id, options?)` — decode the millisecond timestamp embedded in a
+  sortable ID, or `undefined` if the value is not a well-formed sortable ID.
+- `BASE32_CROCKFORD` — an exported Crockford Base32 alphabet preset (the one
+  ULID uses). It omits the ambiguous letters `I`, `L`, `O`, `U`, so ids never
+  confuse `1`/`l` or `0`/`O`, and being single-case it is safe in case-folding
+  contexts. Pass it as `alphabet` to `createId` or `createSortableId`
+  (it is already ascending, so it works with sortable ids directly).
+
+### Changed
+
+- Internal: the shared prefix validation and the CSPRNG index sampling were
+  factored out (`internal/prefix.ts`, `randomIndices`) and reused by the new
+  sortable generator. No change to existing behaviour or output.
+
 ## [0.3.0] - 2026-07-20
 
 ### Added
@@ -61,6 +94,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Cryptographically secure random source with unbiased sampling and a Node
   `crypto` fallback for runtimes without the Web Crypto global.
 
-[Unreleased]: https://github.com/suhailopensource/prefID/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/suhailopensource/prefID/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/suhailopensource/prefID/compare/v0.3.0...v0.4.0
+[0.3.0]: https://github.com/suhailopensource/prefID/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/suhailopensource/prefID/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/suhailopensource/prefID/releases/tag/v0.1.0

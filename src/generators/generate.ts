@@ -3,20 +3,10 @@ import {
   DEFAULT_SEPARATOR,
   DEFAULT_SIZE,
   MAX_SIZE,
-} from "./constants.js";
-import { randomString } from "./internal/random.js";
-import type { IdGenerator, IdOptions, PrefixedId } from "./types.js";
-
-function assertValidPrefix(prefix: string, separator: string): void {
-  if (typeof prefix !== "string" || prefix.length === 0) {
-    throw new TypeError("prefid: prefix must be a non-empty string.");
-  }
-  if (prefix.includes(separator)) {
-    throw new TypeError(
-      `prefid: prefix "${prefix}" must not contain the separator "${separator}".`,
-    );
-  }
-}
+} from "../constants/index.js";
+import { assertValidPrefix } from "../internal/prefix.js";
+import { randomString } from "../internal/random.js";
+import type { IdGenerator, IdOptions, PrefixedId } from "../types/index.js";
 
 export function createId(defaults: IdOptions = {}): IdGenerator {
   const size = defaults.size ?? DEFAULT_SIZE;

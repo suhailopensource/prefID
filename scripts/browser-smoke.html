@@ -39,8 +39,10 @@
         createId,
         ensureUnique,
         getPrefix,
+        getTimestamp,
         id,
         isId,
+        sortableId,
         template,
       } from "../dist/index.js";
 
@@ -68,6 +70,18 @@
         const seen = new Set(Array.from({ length: 1000 }, () => id("x")));
         if (seen.size !== 1000) throw new Error("collision detected");
         lines.push(`1000 ids generated    -> all unique`);
+
+        const sid = sortableId("evt");
+        if (!isId(sid, "evt") || typeof getTimestamp(sid) !== "number") {
+          throw new Error("sortableId() failed");
+        }
+        lines.push(`sortableId("evt")     -> ${sid}`);
+        lines.push(`getTimestamp(...)     -> ${getTimestamp(sid)}`);
+
+        const batch = Array.from({ length: 1000 }, () => sortableId("s"));
+        const ordered = batch.every((v, i) => v === [...batch].sort()[i]);
+        if (!ordered) throw new Error("sortable ids not ordered");
+        lines.push(`1000 sortable ids     -> ascending & unique`);
 
         status.textContent = "✅ prefid works in the browser";
         status.className = "ok";

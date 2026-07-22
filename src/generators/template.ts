@@ -1,5 +1,5 @@
-import { DEFAULT_ALPHABET, MAX_SIZE } from "./constants.js";
-import { randomString } from "./internal/random.js";
+import { DEFAULT_ALPHABET, MAX_SIZE } from "../constants/index.js";
+import { randomString } from "../internal/random.js";
 
 export interface TemplateOptions {
   placeholder?: string;

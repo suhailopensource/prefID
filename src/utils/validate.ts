@@ -1,5 +1,5 @@
-import { DEFAULT_SEPARATOR } from "./constants.js";
-import type { PrefixedId } from "./types.js";
+import { DEFAULT_SEPARATOR } from "../constants/index.js";
+import type { PrefixedId } from "../types/index.js";
 
 export function isId<P extends string>(
   value: unknown,

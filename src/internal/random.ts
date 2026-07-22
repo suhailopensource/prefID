@@ -47,20 +47,26 @@ export function secureRandomBytes(length: number): Uint8Array {
   return bytesProvider(length);
 }
 
-export function randomString(alphabet: string, size: number): string {
-  const length = alphabet.length;
-  const mask = (2 << Math.floor(Math.log2(length - 1))) - 1;
-  const step = Math.ceil((1.6 * mask * size) / length);
+export function randomIndices(radix: number, size: number): number[] {
+  const mask = (2 << Math.floor(Math.log2(radix - 1))) - 1;
+  const step = Math.ceil((1.6 * mask * size) / radix);
 
-  let result = "";
+  const out: number[] = [];
   for (;;) {
     const bytes = secureRandomBytes(step);
     for (let i = 0; i < step; i++) {
       const index = bytes[i] & mask;
-      if (index < length) {
-        result += alphabet[index];
-        if (result.length === size) return result;
+      if (index < radix) {
+        out.push(index);
+        if (out.length === size) return out;
       }
     }
   }
+}
+
+export function randomString(alphabet: string, size: number): string {
+  const indices = randomIndices(alphabet.length, size);
+  let result = "";
+  for (let i = 0; i < size; i++) result += alphabet[indices[i]];
+  return result;
 }

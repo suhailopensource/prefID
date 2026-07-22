@@ -1,4 +1,15 @@
-import { createId, ensureUnique, getPrefix, id, isId, template } from "prefid";
+import {
+  BASE32_CROCKFORD,
+  createId,
+  createSortableId,
+  ensureUnique,
+  getPrefix,
+  getTimestamp,
+  id,
+  isId,
+  sortableId,
+  template,
+} from "prefid";
 
 function assert(condition, message) {
   if (!condition) throw new Error(`smoke failed: ${message}`);
@@ -32,4 +43,28 @@ assert(isId(unique, "u"), "ensureUnique() result");
 const seen = new Set(Array.from({ length: 5000 }, () => id("x")));
 assert(seen.size === 5000, "5000 ids should be unique");
 
-console.log(`✅ prefid ESM smoke passed on ${runtimeName()} — ${uid}`);
+// Sortable ids: monotonic within a process and time-decodable.
+const sid = sortableId("evt");
+assert(isId(sid, "evt"), "sortableId() should produce an evt_ id");
+assert(typeof getTimestamp(sid) === "number", "getTimestamp() should decode");
+
+const batch = Array.from({ length: 2000 }, () => sortableId("s"));
+const batchSorted = [...batch].sort();
+assert(
+  batch.every((value, i) => value === batchSorted[i]),
+  "sortable ids should already be in ascending order",
+);
+assert(new Set(batch).size === 2000, "2000 sortable ids should be unique");
+
+const fixedClock = createSortableId({ now: () => 1_700_000_000_000 });
+assert(
+  getTimestamp(fixedClock("t")) === 1_700_000_000_000,
+  "getTimestamp() should round-trip the generating time",
+);
+
+// Crockford base32 preset: no ambiguous letters, works everywhere.
+assert(BASE32_CROCKFORD.length === 32, "BASE32_CROCKFORD should have 32 chars");
+const crock = createId({ alphabet: BASE32_CROCKFORD })("code");
+assert(!/[ILOU]/.test(crock), "BASE32_CROCKFORD should omit I/L/O/U");
+
+console.log(`✅ prefid ESM smoke passed on ${runtimeName()} — ${uid} / ${sid}`);
