@@ -183,7 +183,12 @@ export function getTimestamp(
   const body = value.slice(index + separator.length);
   if (body.length < timestampSize) return undefined;
 
-  return decodeTime(body.slice(0, timestampSize), alphabet, timestampSize);
+  const decoded = decodeTime(body.slice(0, timestampSize), alphabet, timestampSize);
+  if (decoded === undefined) return undefined;
+  // A random (non-sortable) body is still valid base62, so decode always
+  // succeeds. Reject values we would never encode as a timestamp.
+  if (decoded > SORTABLE_TIME_MAX) return undefined;
+  return decoded;
 }
 
 export function getTimestampOrThrow(
@@ -204,5 +209,8 @@ export function getDate(
   options: GetTimestampOptions = {},
 ): Date | undefined {
   const timestamp = getTimestamp(value, options);
-  return timestamp === undefined ? undefined : new Date(timestamp);
+  if (timestamp === undefined) return undefined;
+  const date = new Date(timestamp);
+  if (Number.isNaN(date.getTime())) return undefined;
+  return date;
 }

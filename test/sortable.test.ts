@@ -7,6 +7,7 @@ import {
   getPrefix,
   getTimestamp,
   getTimestampOrThrow,
+  id,
   isId,
   type PrefixedId,
   sortableId,
@@ -169,6 +170,14 @@ describe("getTimestamp()", () => {
     // '-' is not in base62, so decoding must fail cleanly.
     expect(getTimestamp("u_----------aaaaaaaaaaaaaaaa")).toBeUndefined();
   });
+
+  it("returns undefined for a non-sortable id whose body happens to decode", () => {
+    // Random ids are valid base62, so a naive decode invents a year-355000
+    // "timestamp". Documented contract: undefined if the value is not a
+    // sortable id. The example body is from issue #5.
+    expect(getTimestamp("user_p2uPEvuPGFqeVxarQnCbWfmF")).toBeUndefined();
+    expect(getTimestamp(id("user"))).toBeUndefined();
+  });
 });
 
 describe("createSortableId() — configuration", () => {
@@ -328,6 +337,10 @@ describe("getTimestampOrThrow()", () => {
   it("throws on a non-string value at runtime", () => {
     // @ts-expect-error
     expect(() => getTimestampOrThrow(42)).toThrow(TypeError);
+    expect(() => getTimestampOrThrow(id("user"))).toThrow(TypeError);
+    expect(() => getTimestampOrThrow("user_p2uPEvuPGFqeVxarQnCbWfmF")).toThrow(
+      TypeError,
+    );
   });
 });
 
@@ -347,5 +360,7 @@ describe("getDate()", () => {
   it("returns undefined for a value that is not a well-formed sortable id", () => {
     expect(getDate("nope")).toBeUndefined();
     expect(getDate("evt_")).toBeUndefined();
+    expect(getDate(id("user"))).toBeUndefined();
+    expect(getDate("x_zzzzzzzzAAAA")).toBeUndefined();
   });
 });
