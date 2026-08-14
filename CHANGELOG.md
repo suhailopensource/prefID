@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- `getPrefix(value, separator?)` and `parseId(value, separator?)` now return `undefined` for non-string input instead of throwing, matching `isId` and `getTimestamp`.
+
 ## [1.1.0] - 2026-08-16
 
 ### Added

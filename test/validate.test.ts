@@ -54,6 +54,13 @@ describe("getPrefix()", () => {
   it("supports a custom separator", () => {
     expect(getPrefix("user.abc", ".")).toBe("user");
   });
+
+  it("returns undefined for non-strings", () => {
+    expect(getPrefix(null as unknown as string)).toBeUndefined();
+    expect(getPrefix(undefined as unknown as string)).toBeUndefined();
+    expect(getPrefix(42 as unknown as string)).toBeUndefined();
+    expect(getPrefix({} as unknown as string)).toBeUndefined();
+  });
 });
 
 describe("parseId()", () => {
@@ -71,5 +78,12 @@ describe("parseId()", () => {
 
   it("supports a custom separator", () => {
     expect(parseId("user.abc", ".")).toEqual({ prefix: "user", id: "abc" });
+  });
+
+  it("returns undefined for non-strings", () => {
+    expect(parseId(null as unknown as string)).toBeUndefined();
+    expect(parseId(undefined as unknown as string)).toBeUndefined();
+    expect(parseId(42 as unknown as string)).toBeUndefined();
+    expect(parseId({} as unknown as string)).toBeUndefined();
   });
 });
