@@ -11,6 +11,7 @@ import {
   type PrefixedId,
   sortableId,
 } from "../src/index.js";
+import { MAX_DATE_MS, SORTABLE_TIME_MAX } from "../src/constants/index.js";
 
 /** A generator driven by an explicit clock we control from the test. */
 function withClock(start: number, opts = {}) {
@@ -332,6 +333,10 @@ describe("getTimestampOrThrow()", () => {
 });
 
 describe("getDate()", () => {
+  it("keeps the sortable ceiling inside the Date range", () => {
+    expect(SORTABLE_TIME_MAX).toBeLessThan(MAX_DATE_MS);
+  });
+
   it("returns a Date matching the embedded timestamp", () => {
     const gen = createSortableId({ now: () => 1_700_000_000_000 });
     const date = getDate(gen("evt"));
@@ -355,5 +360,12 @@ describe("getDate()", () => {
         timestampSize: 9,
       }),
     ).toBeUndefined();
+  });
+
+  it("pins the boundary at MAX_DATE_MS", () => {
+    const at = (t: number) =>
+      createSortableId({ now: () => t, monotonic: false })("evt");
+    expect(getDate(at(MAX_DATE_MS))).toBeInstanceOf(Date);
+    expect(getDate(at(MAX_DATE_MS + 1))).toBeUndefined();
   });
 });

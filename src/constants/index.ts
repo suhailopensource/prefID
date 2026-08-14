@@ -12,3 +12,5 @@ export const MAX_SIZE = 4096;
 export const DEFAULT_SORTABLE_RANDOM_SIZE = 16;
 
 export const SORTABLE_TIME_MAX = 2 ** 48 - 1;
+
+export const MAX_DATE_MS = 8_640_000_000_000_000;
