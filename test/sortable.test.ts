@@ -170,6 +170,12 @@ describe("getTimestamp()", () => {
     // '-' is not in base62, so decoding must fail cleanly.
     expect(getTimestamp("u_----------aaaaaaaaaaaaaaaa")).toBeUndefined();
   });
+
+  it("returns undefined for a decoded timestamp above the sortable ceiling", () => {
+    const value = "evt_zzzzzzzzz000000000000";
+    expect(getTimestamp(value)).toBeUndefined();
+    expect(() => getTimestampOrThrow(value)).toThrow(TypeError);
+  });
 });
 
 describe("createSortableId() — configuration", () => {
@@ -362,11 +368,10 @@ describe("getDate()", () => {
     expect(SORTABLE_TIME_MAX).toBeLessThan(MAX_DATE_MS);
   });
 
-  it("returns a Date exactly at the Date-range ceiling and undefined just past it", () => {
+  it("returns undefined for a timestamp outside the sortable time range", () => {
     const at = (t: number) =>
       createSortableId({ now: () => t, monotonic: false })("evt");
 
-    expect(getDate(at(MAX_DATE_MS))).toBeInstanceOf(Date);
-    expect(getDate(at(MAX_DATE_MS + 1))).toBeUndefined();
+    expect(getDate(at(MAX_DATE_MS))).toBeUndefined();
   });
 });
