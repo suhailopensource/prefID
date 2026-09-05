@@ -1,12 +1,5 @@
 name: Publish
 
-# Publishes to npm automatically when you push a version tag, e.g. `v0.1.3`.
-# Create the tag with `npm version patch` (or minor/major), then
-# `git push --follow-tags`.
-#
-# Authentication uses npm Trusted Publishing (OIDC) — no token required.
-# Configure the trusted publisher for this package at:
-#   https://www.npmjs.com/package/prefid/access
 on:
   push:
     tags:
@@ -16,32 +9,25 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # required to create the GitHub Release
-      id-token: write # required for OIDC trusted publishing + provenance
+      contents: write
+      id-token: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 20
           registry-url: "https://registry.npmjs.org"
 
-      # Trusted publishing (OIDC) requires npm 11.5.1+. npm 12 needs Node 22+,
-      # so pin to npm 11, which supports both Node 20 and OIDC publishing.
       - run: npm install -g npm@11
 
       - run: npm ci
-
       - run: npm run typecheck
-
       - run: npm test
-
-      # `prepublishOnly` builds dist/ first. Provenance is generated
-      # automatically when publishing via a trusted publisher.
       - run: npm publish
 
-      # Create a GitHub Release for the pushed tag, with auto-generated notes.
       - name: Create GitHub Release
+        # Using the standard v2 tag here as it's highly dynamic, dependabot will pick it up
         uses: softprops/action-gh-release@v2
         with:
           generate_release_notes: true
