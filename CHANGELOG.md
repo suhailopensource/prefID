@@ -7,11 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-09-05
+
+The read-side API now handles malformed input consistently: values that are not
+well-formed IDs return `undefined` instead of throwing or inventing an answer.
+
 ### Fixed
 
 - `getPrefix(value, separator?)` and `parseId(value, separator?)` now return `undefined` for non-string input instead of throwing, matching `isId` and `getTimestamp`.
 - `parseId()` now returns `undefined` when the ID body following the separator is empty (e.g., `"user_"`).
-- `getTimestamp()` now rejects decoded values above `SORTABLE_TIME_MAX`, so non-sortable random IDs are not reported as plausible timestamps.
+- `getTimestamp()` now rejects decoded values above `SORTABLE_TIME_MAX`, so non-sortable random IDs are no longer reported as plausible timestamps, and `getTimestampOrThrow()` throws a `TypeError` for them as documented. Note this is a heuristic, not validation: roughly 2% of random base62 IDs still decode to an in-range number.
 
 ## [1.1.0] - 2026-08-16
 
@@ -154,7 +159,8 @@ will only ship in a new major version.
 - Cryptographically secure random source with unbiased sampling and a Node
   `crypto` fallback for runtimes without the Web Crypto global.
 
-[Unreleased]: https://github.com/suhailopensource/prefID/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/suhailopensource/prefID/compare/v1.1.1...HEAD
+[1.1.1]: https://github.com/suhailopensource/prefID/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/suhailopensource/prefID/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/suhailopensource/prefID/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/suhailopensource/prefID/compare/v0.4.0...v1.0.0
