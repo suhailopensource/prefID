@@ -53,6 +53,41 @@ jobs:
       - name: Smoke (ESM + CJS)
         run: node scripts/smoke.mjs && node scripts/smoke.cjs
 
+  # Nothing checked the published shape of the package until now, which is how a
+  # packaging bug reached npm. `files: ["dist"]` plus the conditional `exports`
+  # map is the most fragile part of a dual ESM/CJS package: it is only exercised
+  # by installing the tarball, so every other job here can be green while the
+  # thing users download is wrong.
+  #
+  # Both tools run against `npm pack` output, not the working tree, so they see
+  # what npm would actually publish.
+  #
+  # Majors are pinned. An unpinned `npx` gate turns an unrelated tool release
+  # into a red PR, and a gate that goes red for reasons the author cannot act on
+  # is one people learn to ignore. Pinning the major still takes fixes.
+  pack:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+
+      # Exports map, file inclusion, module/type mismatches.
+      #
+      # --strict because publint exits 0 on warnings. Without it this step would
+      # print a real packaging fault and still go green, which is worse than not
+      # having the step: the report exists and nobody is told to act on it.
+      - name: publint
+        run: npx --yes publint@0.3 --strict
+
+      # Whether the types actually resolve from CJS, ESM, node10 and bundlers.
+      - name: Are the types wrong?
+        run: npx --yes @arethetypeswrong/cli@0.18 --pack
+
   runtimes:
     runs-on: ubuntu-latest
     steps:
