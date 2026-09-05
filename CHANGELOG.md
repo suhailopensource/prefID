@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `getPrefix(value, separator?)` and `parseId(value, separator?)` now return `undefined` for non-string input instead of throwing, matching `isId` and `getTimestamp`.
 - `parseId()` now returns `undefined` when the ID body following the separator is empty (e.g., `"user_"`).
+- `getTimestamp()` now rejects decoded values above `SORTABLE_TIME_MAX`, so non-sortable random IDs are not reported as plausible timestamps.
 
 ## [1.1.0] - 2026-08-16
 
