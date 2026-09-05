@@ -1,4 +1,5 @@
 import { createRequire } from "node:module";
+import Module from "node:module";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   randomString,
@@ -92,5 +93,34 @@ describe("node:crypto-backed provider (the Node 14.18 / 18 ESM path)", () => {
     for (let i = 0; i < 1000; i++)
       ids.add(randomString("0123456789abcdef", 16));
     expect(ids.size).toBe(1000);
+  });
+});
+
+describe("universalProvider fallback mechanisms", () => {
+  it("falls back to Node's crypto module when globalThis.crypto is unavailable", () => {
+    vi.stubGlobal("crypto", undefined);
+
+    // This will execute loadNodeCrypto() and use node:crypto
+    const bytes = universalProvider(16);
+    expect(bytes).toHaveLength(16);
+  });
+
+  it("throws when no secure random source is found", () => {
+    vi.stubGlobal("crypto", undefined);
+
+    // Intercept require to simulate node:crypto being unavailable
+    const originalRequire = Module.prototype.require;
+    const requireSpy = vi
+      .spyOn(Module.prototype, "require")
+      .mockImplementation(function (this: any, id: string) {
+        if (id === "node:crypto") throw new Error("Simulate missing module");
+        return originalRequire.apply(this, [id as any]);
+      });
+
+    expect(() => universalProvider(16)).toThrow(
+      /no secure random source found/,
+    );
+
+    requireSpy.mockRestore();
   });
 });
