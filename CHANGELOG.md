@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `entropyBits(options?)`, `sizeForEntropy(bits, alphabet?)` and `collisionProbability(count, options?)` compute the entropy and birthday-collision probability of an ID configuration. `collisionProbability` works in log space with `Math.expm1`, so realistic inputs do not round to 0.
+
 ## [1.1.2] - 2026-10-09
 
 No changes to the published code: `dist/` is byte-identical to 1.1.1. This release
