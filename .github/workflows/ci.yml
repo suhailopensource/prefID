@@ -76,18 +76,12 @@ jobs:
       - run: npm ci
       - run: npm run build
 
-      # Exports map, file inclusion, module/type mismatches.
-      #
-      # --strict because publint exits 0 on warnings. Without it this step would
-      # print a real packaging fault and still go green, which is worse than not
-      # having the step: the report exists and nobody is told to act on it.
-      - name: publint
-        run: npx --yes publint@0.3 --strict
-
-      # Whether the types actually resolve from CJS, ESM, node10 and bundlers.
-      - name: Are the types wrong?
-        run: npx --yes @arethetypeswrong/cli@0.18 --pack
-
+      # publint checks the exports map, file inclusion and module/type
+      # mismatches; attw checks the types resolve from CJS, ESM, node10 and
+      # bundlers. publint runs with --strict because it exits 0 on warnings, so
+      # without it a real packaging fault would still go green.
+      - name: Lint package
+        run: npm run lint:package
   runtimes:
     runs-on: ubuntu-latest
     steps:
