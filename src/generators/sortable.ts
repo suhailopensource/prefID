@@ -184,7 +184,14 @@ export function getTimestamp(
   const body = value.slice(index + separator.length);
   if (body.length < timestampSize) return undefined;
 
-  return decodeTime(body.slice(0, timestampSize), alphabet, timestampSize);
+  const timestamp = decodeTime(
+    body.slice(0, timestampSize),
+    alphabet,
+    timestampSize,
+  );
+  return timestamp !== undefined && timestamp > SORTABLE_TIME_MAX
+    ? undefined
+    : timestamp;
 }
 
 export function getTimestampOrThrow(
