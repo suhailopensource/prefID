@@ -47,8 +47,9 @@
     "typecheck:package": "tsc --noEmit -p tsconfig.types-cjs.json",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "verify": "npm run format:check && npm run typecheck && npm run test:coverage && npm run build && npm run typecheck:package && npm run smoke",
-    "prepublishOnly": "npm run build && npm run typecheck:package"
+    "verify": "npm run format:check && npm run typecheck && npm run test:coverage && npm run build && npm run lint:package && npm run typecheck:package && npm run smoke",
+    "prepublishOnly": "npm run build && npm run typecheck:package",
+    "lint:package": "publint --strict && attw --pack"
   },
   "keywords": [
     "id",
@@ -79,9 +80,11 @@
     "node": ">=14.18"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.5",
     "@types/node": "^20.19.43",
     "@vitest/coverage-v8": "^2.0.0",
     "prettier": "^3.3.0",
+    "publint": "^0.3.25",
     "tsup": "^8.0.0",
     "typescript": "^5.4.0",
     "vitest": "^2.0.0"
