@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.2] - 2026-10-09
+
+No changes to the published code: `dist/` is byte-identical to 1.1.1. This release
+exercises the hardened release pipeline end to end.
+
+### Changed
+
+- CI now checks the packed tarball with `publint --strict` and `@arethetypeswrong/cli` on every pull request, so packaging mistakes are caught before they reach npm.
+- Test coverage thresholds are enforced in CI, and `npm run verify` runs the same coverage gate, so local results match CI.
+- Every GitHub Action is pinned to a verified commit SHA at its current major version, and Dependabot keeps those pins up to date.
+
 ## [1.1.1] - 2026-09-05
 
 The read-side API now handles malformed input consistently: values that are not
@@ -159,7 +170,8 @@ will only ship in a new major version.
 - Cryptographically secure random source with unbiased sampling and a Node
   `crypto` fallback for runtimes without the Web Crypto global.
 
-[Unreleased]: https://github.com/suhailopensource/prefID/compare/v1.1.1...HEAD
+[Unreleased]: https://github.com/suhailopensource/prefID/compare/v1.1.2...HEAD
+[1.1.2]: https://github.com/suhailopensource/prefID/compare/v1.1.1...v1.1.2
 [1.1.1]: https://github.com/suhailopensource/prefID/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/suhailopensource/prefID/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/suhailopensource/prefID/compare/v1.0.0...v1.0.1
