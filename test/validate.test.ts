@@ -6,6 +6,10 @@ describe("isId()", () => {
     expect(isId("user_abc123", "user")).toBe(true);
   });
 
+  it("returns true for an ID with an empty body", () => {
+    expect(isId("user_", "user")).toBe(true);
+  });
+
   it("returns false for a different prefix", () => {
     expect(isId("order_abc123", "user")).toBe(false);
   });
@@ -66,6 +70,18 @@ describe("getPrefix()", () => {
 describe("parseId()", () => {
   it("returns prefix and id for a valid prefixed ID", () => {
     expect(parseId("user_abc123")).toEqual({ prefix: "user", id: "abc123" });
+  });
+
+  it("returns prefix and id for a single character body", () => {
+    expect(parseId("user_x")).toEqual({ prefix: "user", id: "x" });
+  });
+
+  it("returns undefined when the body after the separator is empty", () => {
+    expect(parseId("user_")).toBeUndefined();
+  });
+
+  it("returns undefined when the body is empty with a custom separator", () => {
+    expect(parseId("user.", ".")).toBeUndefined();
   });
 
   it("returns undefined when there is no separator", () => {

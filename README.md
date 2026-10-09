@@ -85,7 +85,7 @@ const { id } = require("prefid");
 id("user"); // "user_a8Kd0f2bQ1nR7pZ3xW4mT6y"
 ```
 
-Everything (`id`, `createId`, `template`, `ensureUnique`, `isId`, `getPrefix`) runs identically in JS. TypeScript users get one extra thing on top — the typed prefix (`` `user_${string}` ``) that catches wrong-ID mistakes at compile time. JS users still get editor autocomplete from the bundled type definitions.
+Everything (`id`, `createId`, `template`, `ensureUnique`, `isId`, `getPrefix`, `parseId`) runs identically in JS. TypeScript users get one extra thing on top — the typed prefix (`` `user_${string}` ``) that catches wrong-ID mistakes at compile time. JS users still get editor autocomplete from the bundled type definitions.
 
 ## Compatibility
 
@@ -111,7 +111,7 @@ Full guides, examples, and the complete API live on the **[documentation site](h
 | [`getTimestamp()` & `getDate()`](https://prefid.vercel.app/docs/api/sortable-id) | Read the time back out of a sortable ID (`getTimestampOrThrow` for a strict variant) |
 | [`template()`](https://prefid.vercel.app/docs/api/template) | Custom ID layouts (`INV-####-####`) |
 | [`ensureUnique()`](https://prefid.vercel.app/docs/api/ensure-unique) | Guarantee an ID is free in your store |
-| [`isId()` & `getPrefix()`](https://prefid.vercel.app/docs/api/validation) | Validate and read IDs |
+| [`isId()`, `getPrefix()` & `parseId()`](https://prefid.vercel.app/docs/api/validation) | Validate and read IDs (`parseId` strictly validates a non-empty body; `isId` is a loose prefix check) |
 | [Uniqueness & Collisions](https://prefid.vercel.app/docs/uniqueness) | How safe the IDs are |
 | [Comparison](https://prefid.vercel.app/docs/comparison) | vs `uuid` and `nanoid` |
 

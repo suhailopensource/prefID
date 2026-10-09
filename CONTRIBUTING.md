@@ -23,12 +23,12 @@ npm install
 | `npm run format:check`      | Verify formatting (used in CI).                   |
 | `npm run build`             | Build `dist/` with tsup.                          |
 | `npm run smoke`             | Run the ESM + CJS smoke tests (Node).             |
+| `npm run verify`            | Run all CI checks locally in CI order.            |
 
 ## Before you open a pull request
 
 1. Add or update tests for your change.
-2. Run `npm run format`, `npm run typecheck`, `npm test`, `npm run build`, and
-   `npm run typecheck:package` — all must pass.
+2. Run `npm run verify` — all CI checks must pass.
 3. Keep the package **dependency-free** (nothing in `dependencies`).
 4. Update `CHANGELOG.md` under the `Unreleased` heading.
 

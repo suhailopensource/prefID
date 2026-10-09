@@ -9,6 +9,7 @@ import {
   getTimestampOrThrow,
   id,
   isId,
+  parseId,
   sortableId,
   template,
 } from "prefid";
@@ -29,6 +30,22 @@ function runtimeName() {
 const uid = id("user");
 assert(isId(uid, "user"), "id() should produce a user_ id");
 assert(getPrefix(uid) === "user", "getPrefix() should return the prefix");
+
+const parsed = parseId(uid);
+assert(
+  parsed !== undefined &&
+    parsed.prefix === "user" &&
+    parsed.id === uid.substring(5),
+  "parseId() should round-trip a generated id",
+);
+assert(
+  parseId("nosep") === undefined,
+  "parseId() should return undefined when separator is missing",
+);
+assert(
+  parseId(null) === undefined,
+  "parseId() should return undefined for non-string input",
+);
 
 const short = createId({ size: 8 })("order");
 assert(short.length === "order_".length + 8, "createId({ size }) length");

@@ -42,6 +42,7 @@
         getTimestamp,
         id,
         isId,
+        parseId,
         sortableId,
         template,
       } from "../dist/index.js";
@@ -56,6 +57,25 @@
         if (!isId(uid, "user")) throw new Error("id() failed");
         lines.push(`id("user")            -> ${uid}`);
         lines.push(`getPrefix(...)        -> ${getPrefix(uid)}`);
+
+        const parsed = parseId(uid);
+        if (
+          !parsed ||
+          parsed.prefix !== "user" ||
+          parsed.id !== uid.substring(5)
+        ) {
+          throw new Error("parseId() round-trip failed");
+        }
+        if (parseId("nosep") !== undefined) {
+          throw new Error("parseId() nosep failed");
+        }
+        if (parseId(null) !== undefined) {
+          throw new Error("parseId() null failed");
+        }
+        lines.push(
+          `parseId(...)        -> { prefix: "${parsed.prefix}", id: "${parsed.id}" }`,
+        );
+
         lines.push(
           `createId({ size: 8 }) -> ${createId({ size: 8 })("order")}`,
         );

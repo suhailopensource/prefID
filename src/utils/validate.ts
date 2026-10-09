@@ -34,9 +34,11 @@ export function parseId(
   if (typeof value !== "string") return undefined;
   const index = value.indexOf(separator);
   if (index > 0) {
+    const id = value.slice(index + separator.length);
+    if (!id) return undefined;
     return {
       prefix: value.slice(0, index),
-      id: value.slice(index + separator.length),
+      id,
     };
   }
   return undefined;
