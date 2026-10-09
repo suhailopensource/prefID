@@ -10,7 +10,6 @@ vi.mock("node:crypto", () => {
   return { randomFillSync };
 });
 
-// We import the Node entry point directly as requested by the issue
 import { id } from "../src/index.node.js";
 
 describe("Node-specific entry point (src/index.node.ts)", () => {

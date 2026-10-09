@@ -100,7 +100,6 @@ describe("universalProvider fallback mechanisms", () => {
   it("falls back to Node's crypto module when globalThis.crypto is unavailable", () => {
     vi.stubGlobal("crypto", undefined);
 
-    // This will execute loadNodeCrypto() and use node:crypto
     const bytes = universalProvider(16);
     expect(bytes).toHaveLength(16);
   });
@@ -108,7 +107,6 @@ describe("universalProvider fallback mechanisms", () => {
   it("throws when no secure random source is found", () => {
     vi.stubGlobal("crypto", undefined);
 
-    // Intercept require to simulate node:crypto being unavailable
     const originalRequire = Module.prototype.require;
     const requireSpy = vi
       .spyOn(Module.prototype, "require")

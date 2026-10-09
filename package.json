@@ -47,7 +47,7 @@
     "typecheck:package": "tsc --noEmit -p tsconfig.types-cjs.json",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "verify": "npm run format:check && npm run typecheck && npm test && npm run build && npm run typecheck:package && npm run smoke",
+    "verify": "npm run format:check && npm run typecheck && npm run test:coverage && npm run build && npm run typecheck:package && npm run smoke",
     "prepublishOnly": "npm run build && npm run typecheck:package"
   },
   "keywords": [
