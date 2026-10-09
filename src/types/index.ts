@@ -7,6 +7,7 @@ export interface IdOptions {
   size?: number;
   separator?: string;
   alphabet?: string;
+  strictPrefix?: boolean;
 }
 
 export type IdGenerator<S extends string = "_"> = <P extends string>(

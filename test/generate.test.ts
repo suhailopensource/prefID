@@ -85,3 +85,35 @@ describe("createId()", () => {
     expect(() => createId({ separator: "" })).toThrow(TypeError);
   });
 });
+
+describe("strictPrefix", () => {
+  const strict = createId({ strictPrefix: true });
+
+  it("accepts alphanumeric prefixes", () => {
+    expect(strict("user2").startsWith("user2_")).toBe(true);
+  });
+
+  it("rejects a space and names the character and index", () => {
+    expect(() => strict("us er")).toThrow(
+      'prefid: prefix "us er" contains an invalid character " " at index 2.',
+    );
+  });
+
+  it("rejects punctuation", () => {
+    expect(() => strict("us-er")).toThrow(TypeError);
+  });
+
+  it("rejects non-ASCII characters", () => {
+    expect(() => strict("usér")).toThrow(/invalid character "é" at index 2/);
+  });
+
+  it("allows 63 characters and rejects 64", () => {
+    expect(() => strict("a".repeat(63))).not.toThrow();
+    expect(() => strict("a".repeat(64))).toThrow(TypeError);
+  });
+
+  it("leaves default mode unchanged", () => {
+    expect(id("us er!ü").startsWith("us er!ü_")).toBe(true);
+    expect(createId()("a".repeat(64)).startsWith("a".repeat(64))).toBe(true);
+  });
+});

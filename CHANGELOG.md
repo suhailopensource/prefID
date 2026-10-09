@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `strictPrefix` option on `createId()` and `createSortableId()`. When `true`, the prefix must be 1-63 ASCII letters or digits, otherwise a `TypeError` names the first offending character. Off by default, so existing behavior is unchanged.
+
 ## [1.1.2] - 2026-10-09
 
 No changes to the published code: `dist/` is byte-identical to 1.1.1. This release
