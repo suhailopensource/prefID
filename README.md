@@ -57,6 +57,20 @@ const eventId = createSortableId({ alphabet: BASE32_CROCKFORD });
 eventId("evt"); // => "evt_00VQ5A1K0MBJGJFX6PWYY6WKY" — no 0/O or 1/l confusion
 ```
 
+## Strict prefixes
+
+By default any non-empty prefix without the separator is accepted. Pass
+`strictPrefix: true` to `createId` or `createSortableId` to require 1-63 ASCII
+letters or digits, so a stray space or typo can't end up in your database:
+
+```ts
+import { createId } from "prefid";
+
+const id = createId({ strictPrefix: true });
+id("user"); // => "user_a8Kd0f2bQ1nR7pZ3xW4mT6y"
+id("us er"); // throws: prefix "us er" contains an invalid character " " at index 2.
+```
+
 ## Install
 
 ```bash

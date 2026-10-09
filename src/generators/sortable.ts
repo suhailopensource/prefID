@@ -16,6 +16,7 @@ export interface SortableIdOptions {
   randomSize?: number;
   timestampSize?: number;
   monotonic?: boolean;
+  strictPrefix?: boolean;
   now?: () => number;
 }
 
@@ -106,6 +107,7 @@ export function createSortableId<S extends string = "_">(
   const separator = options.separator ?? DEFAULT_SEPARATOR;
   const alphabet = options.alphabet ?? DEFAULT_ALPHABET;
   const monotonic = options.monotonic ?? true;
+  const strictPrefix = options.strictPrefix ?? false;
   const clock = options.now ?? Date.now;
   const randomSize = options.randomSize ?? DEFAULT_SORTABLE_RANDOM_SIZE;
 
@@ -131,7 +133,7 @@ export function createSortableId<S extends string = "_">(
   let lastRandom: number[] = [];
 
   return function sortableId<P extends string>(prefix: P): PrefixedId<P, S> {
-    assertValidPrefix(prefix, separator);
+    assertValidPrefix(prefix, separator, strictPrefix);
 
     const reading = clock();
     if (typeof reading !== "number" || !Number.isFinite(reading)) {

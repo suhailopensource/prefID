@@ -14,6 +14,7 @@ export function createId<S extends string = "_">(
   const size = defaults.size ?? DEFAULT_SIZE;
   const separator = defaults.separator ?? DEFAULT_SEPARATOR;
   const alphabet = defaults.alphabet ?? DEFAULT_ALPHABET;
+  const strictPrefix = defaults.strictPrefix ?? false;
 
   if (!Number.isInteger(size) || size < 1 || size > MAX_SIZE) {
     throw new RangeError(
@@ -30,7 +31,7 @@ export function createId<S extends string = "_">(
   }
 
   return function id<P extends string>(prefix: P): PrefixedId<P, S> {
-    assertValidPrefix(prefix, separator);
+    assertValidPrefix(prefix, separator, strictPrefix);
     return `${prefix}${separator}${randomString(alphabet, size)}` as PrefixedId<
       P,
       S

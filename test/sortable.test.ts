@@ -375,3 +375,20 @@ describe("getDate()", () => {
     expect(getDate(at(MAX_DATE_MS))).toBeUndefined();
   });
 });
+
+describe("createSortableId strictPrefix", () => {
+  const strict = createSortableId({ strictPrefix: true });
+
+  it("accepts alphanumeric prefixes", () => {
+    expect(strict("evt").startsWith("evt_")).toBe(true);
+  });
+
+  it("rejects invalid characters and over-long prefixes", () => {
+    expect(() => strict("e vt")).toThrow(/invalid character " " at index 1/);
+    expect(() => strict("a".repeat(64))).toThrow(TypeError);
+  });
+
+  it("leaves default mode unchanged", () => {
+    expect(createSortableId()("e vt").startsWith("e vt_")).toBe(true);
+  });
+});
