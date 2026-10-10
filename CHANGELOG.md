@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `createId(options).many(prefix, count)` — generate multiple prefixed IDs in a batch using shared random-character generation.
+- `createSortableId(options).many(prefix, count)` — generate multiple sortable IDs while preserving monotonic ordering.
+
+### Changed
+
+- Random-byte requests are chunked to respect the Web Crypto `getRandomValues()` limit.
+
 ## [1.1.2] - 2026-10-09
 
 No changes to the published code: `dist/` is byte-identical to 1.1.1. This release
