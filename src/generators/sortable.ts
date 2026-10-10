@@ -8,7 +8,7 @@ import {
 } from "../constants/index.js";
 import { assertValidPrefix } from "../internal/prefix.js";
 import { randomIndices } from "../internal/random.js";
-import type { IdGenerator, PrefixedId } from "../types/index.js";
+import type { BatchIdGenerator, IdGenerator, PrefixedId } from "../types/index.js";
 
 export interface SortableIdOptions {
   separator?: string;
@@ -40,8 +40,8 @@ function assertSortableAlphabet(alphabet: string): void {
     if (alphabet.charCodeAt(i) <= alphabet.charCodeAt(i - 1)) {
       throw new RangeError(
         "prefid: a sortable `alphabet` must have characters in strictly " +
-          "ascending code-point order (no duplicates), otherwise a " +
-          "lexicographic sort would not match chronological order.",
+        "ascending code-point order (no duplicates), otherwise a " +
+        "lexicographic sort would not match chronological order.",
       );
     }
   }
@@ -57,8 +57,7 @@ function encodeTime(time: number, alphabet: string, width: number): string {
   }
   if (value > 0) {
     throw new RangeError(
-      `prefid: timestamp ${time} does not fit in ${width} "${alphabet[0]}".."${
-        alphabet[radix - 1]
+      `prefid: timestamp ${time} does not fit in ${width} "${alphabet[0]}".."${alphabet[radix - 1]
       }" characters.`,
     );
   }
@@ -102,7 +101,7 @@ function assertSize(value: number, name: string): void {
 
 export function createSortableId<S extends string = "_">(
   options: SortableIdOptions & { separator?: S } = {},
-): IdGenerator<S> {
+): BatchIdGenerator<S> {
   const separator = options.separator ?? DEFAULT_SEPARATOR;
   const alphabet = options.alphabet ?? DEFAULT_ALPHABET;
   const monotonic = options.monotonic ?? true;
@@ -130,13 +129,17 @@ export function createSortableId<S extends string = "_">(
   let lastTime = -1;
   let lastRandom: number[] = [];
 
-  return function sortableId<P extends string>(prefix: P): PrefixedId<P, S> {
+
+  const sortableId: BatchIdGenerator<S> = function <P extends string>(
+    prefix: P,
+  ): PrefixedId<P, S> {
     assertValidPrefix(prefix, separator);
 
     const reading = clock();
     if (typeof reading !== "number" || !Number.isFinite(reading)) {
       throw new TypeError("prefid: `now` must return a finite number.");
     }
+
     let time = Math.floor(reading);
     if (time < 0) {
       throw new RangeError("prefid: `now` must return a non-negative number.");
@@ -145,12 +148,14 @@ export function createSortableId<S extends string = "_">(
     if (monotonic && time <= lastTime) {
       time = lastTime;
       const next = incrementIndices(lastRandom, radix);
+
       if (next) {
         lastRandom = next;
       } else {
         time = lastTime + 1;
         lastRandom = randomIndices(radix, randomSize);
       }
+
       lastTime = time;
     } else {
       lastTime = time;
@@ -158,10 +163,36 @@ export function createSortableId<S extends string = "_">(
     }
 
     let body = encodeTime(time, alphabet, timestampSize);
-    for (let i = 0; i < randomSize; i++) body += alphabet[lastRandom[i]];
+    for (let i = 0; i < randomSize; i++) {
+      body += alphabet[lastRandom[i]];
+    }
 
     return `${prefix}${separator}${body}` as PrefixedId<P, S>;
   };
+
+  sortableId.many = function <P extends string>(
+    prefix: P,
+    count: number,
+  ): PrefixedId<P, S>[] {
+    if (!Number.isInteger(count) || count < 0 || count > 10_000) {
+      throw new RangeError(
+        "prefid: batch count must be an integer between 0 and 10000.",
+      );
+    }
+
+    assertValidPrefix(prefix, separator);
+
+    const ids: PrefixedId<P, S>[] = [];
+
+    for (let i = 0; i < count; i++) {
+      ids.push(sortableId(prefix));
+    }
+
+    return ids;
+  };
+
+  return sortableId;
+
 }
 
 export const sortableId: IdGenerator = createSortableId();

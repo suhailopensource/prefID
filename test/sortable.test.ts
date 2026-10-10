@@ -199,6 +199,23 @@ describe("createSortableId() — configuration", () => {
     expect(getTimestamp(a)).toBe(getTimestamp(b));
     expect(a).not.toBe(b);
   });
+
+
+  it("generates strictly increasing IDs in a batch", () => {
+    const generator = createSortableId({
+      monotonic: true,
+      now: () => 1_800_000_000_000,
+    });
+
+    const ids = generator.many("evt", 100);
+
+    expect(ids).toHaveLength(100);
+
+    for (let i = 1; i < ids.length; i++) {
+      expect(ids[i] > ids[i - 1]).toBe(true);
+    }
+  });
+
 });
 
 describe("BASE32_CROCKFORD preset", () => {
