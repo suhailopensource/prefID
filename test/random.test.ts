@@ -25,6 +25,26 @@ describe("secureRandomBytes()", () => {
   it("returns different bytes on each call", () => {
     expect(toHex(secureRandomBytes(16))).not.toBe(toHex(secureRandomBytes(16)));
   });
+
+
+  it("handles requests larger than the Web Crypto limit", () => {
+    const requestedLengths: number[] = [];
+
+    setBytesProvider((length) => {
+      requestedLengths.push(length);
+      return new Uint8Array(length).fill(1);
+    });
+
+    try {
+      const bytes = secureRandomBytes(70_000);
+
+      expect(bytes).toHaveLength(70_000);
+      expect(requestedLengths).toEqual([65_536, 4_464]);
+    } finally {
+      setBytesProvider(universalProvider);
+    }
+  });
+
 });
 
 describe("randomString()", () => {
