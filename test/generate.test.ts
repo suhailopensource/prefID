@@ -85,3 +85,46 @@ describe("createId()", () => {
     expect(() => createId({ separator: "" })).toThrow(TypeError);
   });
 });
+
+describe("createId().many()", () => {
+  it("generates the requested number of IDs", () => {
+    const generator = createId();
+
+    const ids = generator.many("user", 5);
+
+    expect(ids).toHaveLength(5);
+    expect(ids.every((value) => value.startsWith("user_"))).toBe(true);
+  });
+
+  it("generates distinct IDs", () => {
+    const generator = createId();
+
+    const ids = generator.many("user", 100);
+
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+
+  it("returns an empty array for a count of zero", () => {
+    expect(createId().many("user", 0)).toEqual([]);
+  });
+
+  it("rejects invalid batch counts", () => {
+    const generator = createId();
+
+    expect(() => generator.many("user", -1)).toThrow(RangeError);
+    expect(() => generator.many("user", 1.5)).toThrow(RangeError);
+    expect(() => generator.many("user", 10_001)).toThrow(RangeError);
+  });
+
+  it("respects custom size and separator", () => {
+    const generator = createId({ size: 4, separator: ":" });
+
+    const ids = generator.many("user", 3);
+
+    expect(ids).toHaveLength(3);
+
+    for (const value of ids) {
+      expect(value).toMatch(/^user:[A-Za-z0-9]{4}$/);
+    }
+  });
+});

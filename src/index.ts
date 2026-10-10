@@ -11,7 +11,7 @@ export { template } from "./generators/template.js";
 export { ensureUnique } from "./utils/ensure-unique.js";
 export { getPrefix, isId, parseId } from "./utils/validate.js";
 
-export type { IdGenerator, IdOptions, PrefixedId } from "./types/index.js";
+export type { BatchIdGenerator, IdGenerator, IdOptions, PrefixedId } from "./types/index.js";
 export type {
   GetTimestampOptions,
   SortableIdOptions,
