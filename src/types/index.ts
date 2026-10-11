@@ -12,3 +12,7 @@ export interface IdOptions {
 export type IdGenerator<S extends string = "_"> = <P extends string>(
   prefix: P,
 ) => PrefixedId<P, S>;
+
+export type BatchIdGenerator<S extends string = "_"> = IdGenerator<S> & {
+  many: <P extends string>(prefix: P, count: number) => PrefixedId<P, S>[];
+};

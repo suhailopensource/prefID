@@ -70,3 +70,45 @@ export function randomString(alphabet: string, size: number): string {
   for (let i = 0; i < size; i++) result += alphabet[indices[i]];
   return result;
 }
+
+const MAX_BYTES_PER_CALL = 65_536;
+
+export function randomIndexBatch(
+  radix: number,
+  size: number,
+  count: number,
+): number[] {
+  const total = size * count;
+  const mask = (2 << Math.floor(Math.log2(radix - 1))) - 1;
+  const out: number[] = [];
+
+  while (out.length < total) {
+    const missing = total - out.length;
+    const step = Math.min(
+      MAX_BYTES_PER_CALL,
+      Math.max(1, Math.ceil((1.6 * mask * missing) / radix)),
+    );
+    const bytes = secureRandomBytes(step);
+    for (let i = 0; i < step && out.length < total; i++) {
+      const index = bytes[i] & mask;
+      if (index < radix) out.push(index);
+    }
+  }
+  return out;
+}
+
+export function randomStrings(
+  alphabet: string,
+  size: number,
+  count: number,
+): string[] {
+  const indices = randomIndexBatch(alphabet.length, size, count);
+  const out: string[] = new Array(count);
+  let cursor = 0;
+  for (let n = 0; n < count; n++) {
+    let result = "";
+    for (let i = 0; i < size; i++) result += alphabet[indices[cursor++]];
+    out[n] = result;
+  }
+  return out;
+}

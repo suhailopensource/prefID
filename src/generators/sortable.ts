@@ -2,13 +2,14 @@ import {
   DEFAULT_ALPHABET,
   DEFAULT_SEPARATOR,
   DEFAULT_SORTABLE_RANDOM_SIZE,
+  MAX_BATCH,
   MAX_DATE_MS,
   MAX_SIZE,
   SORTABLE_TIME_MAX,
 } from "../constants/index.js";
-import { assertValidPrefix } from "../internal/prefix.js";
+import { assertValidCount, assertValidPrefix } from "../internal/prefix.js";
 import { randomIndices } from "../internal/random.js";
-import type { IdGenerator, PrefixedId } from "../types/index.js";
+import type { BatchIdGenerator, PrefixedId } from "../types/index.js";
 
 export interface SortableIdOptions {
   separator?: string;
@@ -102,7 +103,7 @@ function assertSize(value: number, name: string): void {
 
 export function createSortableId<S extends string = "_">(
   options: SortableIdOptions & { separator?: S } = {},
-): IdGenerator<S> {
+): BatchIdGenerator<S> {
   const separator = options.separator ?? DEFAULT_SEPARATOR;
   const alphabet = options.alphabet ?? DEFAULT_ALPHABET;
   const monotonic = options.monotonic ?? true;
@@ -130,7 +131,7 @@ export function createSortableId<S extends string = "_">(
   let lastTime = -1;
   let lastRandom: number[] = [];
 
-  return function sortableId<P extends string>(prefix: P): PrefixedId<P, S> {
+  function sortableId<P extends string>(prefix: P): PrefixedId<P, S> {
     assertValidPrefix(prefix, separator);
 
     const reading = clock();
@@ -161,10 +162,23 @@ export function createSortableId<S extends string = "_">(
     for (let i = 0; i < randomSize; i++) body += alphabet[lastRandom[i]];
 
     return `${prefix}${separator}${body}` as PrefixedId<P, S>;
-  };
+  }
+
+  function many<P extends string>(
+    prefix: P,
+    count: number,
+  ): PrefixedId<P, S>[] {
+    assertValidPrefix(prefix, separator);
+    assertValidCount(count, MAX_BATCH);
+    const out: PrefixedId<P, S>[] = new Array(count);
+    for (let i = 0; i < count; i++) out[i] = sortableId(prefix);
+    return out;
+  }
+
+  return Object.assign(sortableId, { many });
 }
 
-export const sortableId: IdGenerator = createSortableId();
+export const sortableId: BatchIdGenerator = createSortableId();
 
 export function getTimestamp(
   value: string,

@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `many(prefix, count)` on `id`, `sortableId` and the generators returned by `createId()` and `createSortableId()`. It returns `count` IDs (0 to 10,000) and draws random bytes in chunks of at most 65,536 bytes, so it works in browsers, Deno and Bun. Sortable batches stay strictly increasing.
+- `BatchIdGenerator<S>` type. `IdGenerator` is unchanged, so existing code that assigns a plain function to it keeps compiling.
+
 ## [1.1.2] - 2026-10-09
 
 No changes to the published code: `dist/` is byte-identical to 1.1.1. This release

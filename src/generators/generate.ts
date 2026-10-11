@@ -2,15 +2,20 @@ import {
   DEFAULT_ALPHABET,
   DEFAULT_SEPARATOR,
   DEFAULT_SIZE,
+  MAX_BATCH,
   MAX_SIZE,
 } from "../constants/index.js";
-import { assertValidPrefix } from "../internal/prefix.js";
-import { randomString } from "../internal/random.js";
-import type { IdGenerator, IdOptions, PrefixedId } from "../types/index.js";
+import { assertValidCount, assertValidPrefix } from "../internal/prefix.js";
+import { randomString, randomStrings } from "../internal/random.js";
+import type {
+  BatchIdGenerator,
+  IdOptions,
+  PrefixedId,
+} from "../types/index.js";
 
 export function createId<S extends string = "_">(
   defaults: IdOptions & { separator?: S } = {},
-): IdGenerator<S> {
+): BatchIdGenerator<S> {
   const size = defaults.size ?? DEFAULT_SIZE;
   const separator = defaults.separator ?? DEFAULT_SEPARATOR;
   const alphabet = defaults.alphabet ?? DEFAULT_ALPHABET;
@@ -29,13 +34,27 @@ export function createId<S extends string = "_">(
     throw new TypeError("prefid: `separator` must be a non-empty string.");
   }
 
-  return function id<P extends string>(prefix: P): PrefixedId<P, S> {
+  function id<P extends string>(prefix: P): PrefixedId<P, S> {
     assertValidPrefix(prefix, separator);
     return `${prefix}${separator}${randomString(alphabet, size)}` as PrefixedId<
       P,
       S
     >;
-  };
+  }
+
+  function many<P extends string>(
+    prefix: P,
+    count: number,
+  ): PrefixedId<P, S>[] {
+    assertValidPrefix(prefix, separator);
+    assertValidCount(count, MAX_BATCH);
+    const head = `${prefix}${separator}`;
+    return randomStrings(alphabet, size, count).map(
+      (body) => `${head}${body}` as PrefixedId<P, S>,
+    );
+  }
+
+  return Object.assign(id, { many });
 }
 
-export const id: IdGenerator = createId();
+export const id: BatchIdGenerator = createId();

@@ -57,6 +57,21 @@ const eventId = createSortableId({ alphabet: BASE32_CROCKFORD });
 eventId("evt"); // => "evt_00VQ5A1K0MBJGJFX6PWYY6WKY" — no 0/O or 1/l confusion
 ```
 
+## Bulk generation
+
+Need many IDs at once (seeding, bulk inserts)? `many` draws the random bytes in
+one pass instead of once per ID:
+
+```ts
+import { id, sortableId } from "prefid";
+
+id.many("user", 1000); // => ["user_…", …] (1000 IDs)
+sortableId.many("evt", 1000); // still strictly increasing
+```
+
+`count` is an integer from 0 to 10,000. For sortable IDs there is no speed-up
+over calling `sortableId` in a loop; `many` is there for the same API.
+
 ## Install
 
 ```bash
