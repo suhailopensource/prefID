@@ -81,6 +81,28 @@ describe("createId()", () => {
     expect(() => createId({ alphabet: "x" })).toThrow(RangeError);
   });
 
+  it("rejects an alphabet longer than 256 characters", () => {
+    const long = Array.from({ length: 257 }, (_, i) =>
+      String.fromCharCode(0x0400 + i),
+    ).join("");
+    expect(() => createId({ alphabet: long })).toThrow(RangeError);
+  });
+
+  it("rejects an alphabet with surrogate code units (emoji)", () => {
+    expect(() => createId({ alphabet: "😀😁🙂🙃" })).toThrow(RangeError);
+    expect(() => createId({ alphabet: "ab\uD800c" })).toThrow(RangeError);
+  });
+
+  it("rejects an alphabet with duplicate characters", () => {
+    expect(() => createId({ alphabet: "aa" })).toThrow(RangeError);
+    expect(() => createId({ alphabet: "aab" })).toThrow(RangeError);
+  });
+
+  it("accepts valid custom alphabets between 2 and 256 characters", () => {
+    const gen = createId({ alphabet: "01" });
+    expect(gen("u")).toMatch(/^u_[01]+$/);
+  });
+
   it("rejects an empty separator", () => {
     expect(() => createId({ separator: "" })).toThrow(TypeError);
   });

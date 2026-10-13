@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Validate custom alphabets in one shared place across `createId()`, `createSortableId()`, `template()`, `entropyBits()`, `sizeForEntropy()`, and `collisionProbability()`. Alphabets with duplicate characters, surrogate code units (emoji outside the BMP), or exceeding 256 characters now throw a `RangeError` instead of producing silently bad or biased IDs.
+- `template()` placeholder validation now rejects non-BMP characters with the error `"prefid: \`placeholder\` must be a single BMP character."`.
+
 ## [1.2.0] - 2026-10-11
 
 Opt-in additions only. Existing calls behave as in 1.1.2: for the same random

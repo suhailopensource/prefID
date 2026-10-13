@@ -5,6 +5,7 @@ import {
   MAX_BATCH,
   MAX_SIZE,
 } from "../constants/index.js";
+import { assertAlphabet } from "../internal/alphabet.js";
 import { assertValidCount } from "../internal/count.js";
 import { assertValidPrefix } from "../internal/prefix.js";
 import { randomString, randomStrings } from "../internal/random.js";
@@ -27,11 +28,7 @@ export function createId<S extends string = "_">(
       `prefid: \`size\` must be an integer between 1 and ${MAX_SIZE}.`,
     );
   }
-  if (typeof alphabet !== "string" || alphabet.length < 2) {
-    throw new RangeError(
-      "prefid: `alphabet` must contain at least 2 characters.",
-    );
-  }
+  assertAlphabet(alphabet);
   if (typeof separator !== "string" || separator.length === 0) {
     throw new TypeError("prefid: `separator` must be a non-empty string.");
   }

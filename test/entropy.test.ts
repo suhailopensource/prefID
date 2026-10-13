@@ -21,6 +21,15 @@ describe("entropyBits()", () => {
     expect(() => entropyBits({ size: 1.5 })).toThrow(RangeError);
     expect(() => entropyBits({ size: 4097 })).toThrow(RangeError);
     expect(() => entropyBits({ alphabet: "a" })).toThrow(RangeError);
+    expect(() => entropyBits({ alphabet: "aa" })).toThrow(RangeError);
+    expect(() => entropyBits({ alphabet: "😀😁" })).toThrow(RangeError);
+    expect(() =>
+      entropyBits({
+        alphabet: Array.from({ length: 257 }, (_, i) =>
+          String.fromCharCode(0x0400 + i),
+        ).join(""),
+      }),
+    ).toThrow(RangeError);
   });
 });
 
@@ -47,6 +56,16 @@ describe("sizeForEntropy()", () => {
     expect(() => sizeForEntropy(0)).toThrow(RangeError);
     expect(() => sizeForEntropy(Number.NaN)).toThrow(RangeError);
     expect(() => sizeForEntropy(64, "a")).toThrow(RangeError);
+    expect(() => sizeForEntropy(64, "aa")).toThrow(RangeError);
+    expect(() => sizeForEntropy(64, "😀😁")).toThrow(RangeError);
+    expect(() =>
+      sizeForEntropy(
+        64,
+        Array.from({ length: 257 }, (_, i) =>
+          String.fromCharCode(0x0400 + i),
+        ).join(""),
+      ),
+    ).toThrow(RangeError);
   });
 });
 
@@ -80,5 +99,18 @@ describe("collisionProbability()", () => {
     expect(() => collisionProbability(10, { alphabet: "a" })).toThrow(
       RangeError,
     );
+    expect(() => collisionProbability(10, { alphabet: "aa" })).toThrow(
+      RangeError,
+    );
+    expect(() => collisionProbability(10, { alphabet: "😀😁" })).toThrow(
+      RangeError,
+    );
+    expect(() =>
+      collisionProbability(10, {
+        alphabet: Array.from({ length: 257 }, (_, i) =>
+          String.fromCharCode(0x0400 + i),
+        ).join(""),
+      }),
+    ).toThrow(RangeError);
   });
 });

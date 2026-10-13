@@ -63,12 +63,33 @@ describe("template()", () => {
     expect(gen().length).toBe(4096);
   });
 
-  it("throws on a multi-character placeholder", () => {
+  it("throws on a multi-character or non-BMP placeholder", () => {
     expect(() => template("a##", { placeholder: "##" })).toThrow(RangeError);
+    expect(() => template("a##", { placeholder: "" })).toThrow(RangeError);
+    expect(() => template("a##", { placeholder: "😀" })).toThrow(RangeError);
+    expect(() => template("a##", { placeholder: "\uD800" })).toThrow(
+      RangeError,
+    );
   });
 
   it("throws on an alphabet shorter than 2 characters", () => {
     expect(() => template("a#", { alphabet: "x" })).toThrow(RangeError);
+  });
+
+  it("throws on an alphabet longer than 256 characters", () => {
+    const long = Array.from({ length: 257 }, (_, i) =>
+      String.fromCharCode(0x0400 + i),
+    ).join("");
+    expect(() => template("a#", { alphabet: long })).toThrow(RangeError);
+  });
+
+  it("throws on an alphabet with surrogate code units (emoji)", () => {
+    expect(() => template("a#", { alphabet: "😀😁" })).toThrow(RangeError);
+  });
+
+  it("throws on an alphabet with duplicate characters", () => {
+    expect(() => template("a#", { alphabet: "aa" })).toThrow(RangeError);
+    expect(() => template("a#", { alphabet: "aba" })).toThrow(RangeError);
   });
 
   it("preserves the literal prefix in the type", () => {

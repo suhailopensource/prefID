@@ -7,6 +7,7 @@ import {
   MAX_SIZE,
   SORTABLE_TIME_MAX,
 } from "../constants/index.js";
+import { assertAlphabet } from "../internal/alphabet.js";
 import { assertValidCount } from "../internal/count.js";
 import { assertValidPrefix } from "../internal/prefix.js";
 import { randomIndices } from "../internal/random.js";
@@ -113,11 +114,7 @@ export function createSortableId<S extends string = "_">(
   const clock = options.now ?? Date.now;
   const randomSize = options.randomSize ?? DEFAULT_SORTABLE_RANDOM_SIZE;
 
-  if (typeof alphabet !== "string" || alphabet.length < 2) {
-    throw new RangeError(
-      "prefid: `alphabet` must contain at least 2 characters.",
-    );
-  }
+  assertAlphabet(alphabet);
   if (typeof separator !== "string" || separator.length === 0) {
     throw new TypeError("prefid: `separator` must be a non-empty string.");
   }
