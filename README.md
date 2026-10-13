@@ -57,6 +57,13 @@ const eventId = createSortableId({ alphabet: BASE32_CROCKFORD });
 eventId("evt"); // => "evt_00VQ5A1K0MBJGJFX6PWYY6WKY" — no 0/O or 1/l confusion
 ```
 
+### Custom alphabets
+
+You can pass a custom `alphabet` to `createId`, `createSortableId`, `template`, and entropy utilities.
+Alphabets must contain between 2 and 256 unique characters within the Basic Multilingual Plane (BMP).
+Duplicates, surrogate code units (such as emoji), and alphabets exceeding 256 characters throw a `RangeError`.
+For `createSortableId`, characters must additionally be in strictly ascending code-point order to guarantee chronological sorting.
+
 ## Strict prefixes
 
 By default any non-empty prefix without the separator is accepted. Pass
