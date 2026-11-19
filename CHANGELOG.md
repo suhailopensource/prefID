@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Sortable ID generation now rejects timestamps above the 48-bit sortable range and preserves the previous monotonic state when a clock reading or timestamp-width encoding fails. Invalid clock readings can recover; exhaustion of the monotonic range remains irreversible.
+
 ## [1.2.0] - 2026-10-11
 
 Opt-in additions only. Existing calls behave as in 1.1.2: for the same random

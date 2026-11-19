@@ -146,24 +146,30 @@ export function createSortableId<S extends string = "_">(
       throw new RangeError("prefid: `now` must return a non-negative number.");
     }
 
+    let nextRandom: number[];
     if (monotonic && time <= lastTime) {
       time = lastTime;
       const next = incrementIndices(lastRandom, radix);
       if (next) {
-        lastRandom = next;
+        nextRandom = next;
       } else {
         time = lastTime + 1;
-        lastRandom = randomIndices(radix, randomSize);
+        nextRandom = randomIndices(radix, randomSize);
       }
-      lastTime = time;
     } else {
-      lastTime = time;
-      lastRandom = randomIndices(radix, randomSize);
+      nextRandom = randomIndices(radix, randomSize);
     }
 
+    if (time > SORTABLE_TIME_MAX) {
+      throw new RangeError(
+        `prefid: timestamp ${time} exceeds the sortable range (2^48-1 ms).`,
+      );
+    }
     let body = encodeTime(time, alphabet, timestampSize);
-    for (let i = 0; i < randomSize; i++) body += alphabet[lastRandom[i]];
+    for (let i = 0; i < randomSize; i++) body += alphabet[nextRandom[i]];
 
+    lastTime = time;
+    lastRandom = nextRandom;
     return `${prefix}${separator}${body}` as PrefixedId<P, S>;
   }
 

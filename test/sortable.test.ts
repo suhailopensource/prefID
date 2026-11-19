@@ -134,6 +134,90 @@ describe("sortableId() — monotonic overflow", () => {
   });
 });
 
+describe("createSortableId() — timestamp range and state recovery (#55)", () => {
+  it.each([
+    ["default base62", {}],
+    ["custom timestamp width", { timestampSize: 12 }],
+    ["Crockford base32", { alphabet: BASE32_CROCKFORD }],
+  ])("rejects 2^48 with %s", (_label, options) => {
+    const gen = createSortableId({
+      ...options,
+      now: () => SORTABLE_TIME_MAX + 1,
+    });
+    expect(() => gen("evt")).toThrow(
+      new RangeError(
+        `prefid: timestamp ${SORTABLE_TIME_MAX + 1} exceeds the sortable range (2^48-1 ms).`,
+      ),
+    );
+  });
+
+  it("accepts the maximum timestamp and decodes it with custom alphabets", () => {
+    for (const options of [
+      {},
+      { timestampSize: 12 },
+      { alphabet: BASE32_CROCKFORD },
+    ]) {
+      const id = createSortableId({
+        ...options,
+        now: () => SORTABLE_TIME_MAX,
+      })("evt");
+      expect(getTimestamp(id, options)).toBe(SORTABLE_TIME_MAX);
+    }
+  });
+
+  it.each([SORTABLE_TIME_MAX + 5, 62 ** 9])(
+    "recovers after an invalid initial reading of %s without poisoning state",
+    (badTime) => {
+      const { gen, set } = withClock(badTime);
+      expect(() => gen("evt")).toThrow(RangeError);
+      set(1_700_000_000_000);
+      const first = gen("evt");
+      const second = gen("evt");
+      expect(getTimestamp(first)).toBe(1_700_000_000_000);
+      expect(getTimestamp(second)).toBe(1_700_000_000_000);
+      expect(second > first).toBe(true);
+    },
+  );
+
+  it("recovers when a timestamp does not fit the configured width", () => {
+    const { gen, set } = withClock(62, { timestampSize: 1 });
+    expect(() => gen("evt")).toThrow(/does not fit/);
+    set(42);
+    expect(getTimestamp(gen("evt"), { timestampSize: 1 })).toBe(42);
+  });
+
+  it("does not poison existing monotonic state after a bad clock spike", () => {
+    const { gen, set } = withClock(1_700_000_000_000);
+    const first = gen("evt");
+    set(SORTABLE_TIME_MAX + 5);
+    expect(() => gen("evt")).toThrow(RangeError);
+    set(1_700_000_000_000);
+    const next = gen("evt");
+    expect(next > first).toBe(true);
+    expect(getTimestamp(next)).toBe(1_700_000_000_000);
+  });
+
+  it("never recovers after monotonic tail exhaustion at the maximum time", () => {
+    const { gen, set } = withClock(SORTABLE_TIME_MAX, {
+      alphabet: "01",
+      randomSize: 1,
+    });
+    const first = gen("evt");
+    expect(getTimestamp(first, { alphabet: "01" })).toBe(SORTABLE_TIME_MAX);
+    for (let i = 0; i < 2; i++) {
+      try {
+        gen("evt");
+      } catch (error) {
+        expect(error).toBeInstanceOf(RangeError);
+        break;
+      }
+    }
+    set(123);
+    expect(() => gen("evt")).toThrow(RangeError);
+    expect(() => gen("evt")).toThrow(RangeError);
+  });
+});
+
 describe("getTimestamp()", () => {
   it("round-trips the generating timestamp", () => {
     const { gen } = withClock(1_723_456_789_012);
@@ -368,11 +452,10 @@ describe("getDate()", () => {
     expect(SORTABLE_TIME_MAX).toBeLessThan(MAX_DATE_MS);
   });
 
-  it("returns undefined for a timestamp outside the sortable time range", () => {
-    const at = (t: number) =>
-      createSortableId({ now: () => t, monotonic: false })("evt");
-
-    expect(getDate(at(MAX_DATE_MS))).toBeUndefined();
+  it("returns undefined for a previously encoded out-of-range timestamp", () => {
+    const value = "evt_dZQ2nZplQ0000000000000000";
+    expect(getTimestamp(value)).toBeUndefined();
+    expect(getDate(value)).toBeUndefined();
   });
 });
 
