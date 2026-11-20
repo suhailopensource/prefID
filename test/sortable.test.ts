@@ -267,6 +267,20 @@ describe("createSortableId() — validation", () => {
     expect(() => createSortableId({ alphabet: "x" })).toThrow(RangeError);
   });
 
+  it("rejects an alphabet longer than 256 characters", () => {
+    const long = Array.from({ length: 257 }, (_, i) =>
+      String.fromCharCode(0x0400 + i),
+    ).join("");
+    expect(() => createSortableId({ alphabet: long })).toThrow(RangeError);
+  });
+
+  it("rejects an alphabet with surrogate code units (emoji)", () => {
+    expect(() => createSortableId({ alphabet: "😀😁" })).toThrow(RangeError);
+    expect(() => createSortableId({ alphabet: "ab\uD800" })).toThrow(
+      RangeError,
+    );
+  });
+
   it("rejects an empty separator", () => {
     expect(() => createSortableId({ separator: "" })).toThrow(TypeError);
   });
