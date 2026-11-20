@@ -3,15 +3,8 @@ import {
   DEFAULT_SIZE,
   MAX_SIZE,
 } from "../constants/index.js";
+import { assertAlphabet } from "../internal/alphabet.js";
 import type { IdOptions } from "../types/index.js";
-
-function assertAlphabet(alphabet: unknown): asserts alphabet is string {
-  if (typeof alphabet !== "string" || alphabet.length < 2) {
-    throw new RangeError(
-      "prefid: `alphabet` must contain at least 2 characters.",
-    );
-  }
-}
 
 function resolve(options: IdOptions): { size: number; radix: number } {
   const size = options.size ?? DEFAULT_SIZE;

@@ -1,4 +1,5 @@
 import { DEFAULT_ALPHABET, MAX_SIZE } from "../constants/index.js";
+import { assertAlphabet, SURROGATE_PATTERN } from "../internal/alphabet.js";
 import { randomString } from "../internal/random.js";
 
 export interface TemplateOptions {
@@ -25,14 +26,16 @@ export function template(
   if (typeof pattern !== "string" || pattern.length === 0) {
     throw new TypeError("prefid: template pattern must be a non-empty string.");
   }
-  if (typeof placeholder !== "string" || placeholder.length !== 1) {
-    throw new RangeError("prefid: `placeholder` must be a single character.");
-  }
-  if (typeof alphabet !== "string" || alphabet.length < 2) {
+  if (
+    typeof placeholder !== "string" ||
+    placeholder.length !== 1 ||
+    SURROGATE_PATTERN.test(placeholder)
+  ) {
     throw new RangeError(
-      "prefid: `alphabet` must contain at least 2 characters.",
+      "prefid: `placeholder` must be a single BMP character.",
     );
   }
+  assertAlphabet(alphabet);
 
   let slots = 0;
   for (const char of pattern) {
